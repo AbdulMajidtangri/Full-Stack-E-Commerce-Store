@@ -20,7 +20,7 @@ export default function ProductDetailPage({ params }) {
         <h1 className="text-2xl font-bold mb-4">Product not found</h1>
         <p className="text-gray-400 mb-6">The product you're looking for doesn't exist.</p>
         <Link
-          href="/dashboard/products"
+          href="/dashboard/product"
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-xl transition-all"
         >
           Back to Products
@@ -116,9 +116,9 @@ export default function ProductDetailPage({ params }) {
         {/* Breadcrumb */}
         <nav className="mb-6">
           <ol className="flex items-center space-x-2 text-sm text-gray-400">
-            <li><Link href="/dashboard" className="hover:text-blue-400 transition-colors">Dashboard</Link></li>
+            <li><Link href="/" className="hover:text-blue-400 transition-colors">Home</Link></li>
             <li><ChevronRight size={16} /></li>
-            <li><Link href="/dashboard/products" className="hover:text-blue-400 transition-colors">Products</Link></li>
+            <li><Link href="/dashboard/product" className="hover:text-blue-400 transition-colors">Products</Link></li>
             <li><ChevronRight size={16} /></li>
             <li className="text-white truncate max-w-[150px]">{product.title}</li>
           </ol>

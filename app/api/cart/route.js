@@ -1,14 +1,39 @@
 import connectDB from "../../../app/authpg/lib/mongodb";
 import Cart from "../../../app/authpg/models/Cart";
-
 export async function POST(req) {
   try {
     const { userId, product } = await req.json();
-    if (!userId)
-      return new Response(JSON.stringify({ error: "Not authenticated" }), { status: 401 });
+
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ error: "Not authenticated" }),
+        { status: 401 }
+      );
+    }
 
     await connectDB();
+
     const productId = String(product.productId);
+
+    // ✅ Extract image as string if it’s an object
+    let imageUrl = "";
+    if (typeof product.image === "string") {
+      imageUrl = product.image;
+    } else if (product.image && product.image.src) {
+      imageUrl = product.image.src;
+    } else {
+      imageUrl = "/default-product.png"; // fallback
+    }
+
+    const newItem = {
+      productId,
+      name: product.name || "Unnamed Product",
+      image: imageUrl, // ✅ Fixed here
+      price: Number(product.price) || 0,
+      quantity: 1,
+      stock: Number(product.stock) || 1,
+    };
+
     let cart = await Cart.findOne({ userId });
     if (!cart) cart = new Cart({ userId, items: [] });
 
@@ -17,7 +42,7 @@ export async function POST(req) {
     );
 
     if (existingItem) {
-      if (existingItem.quantity < (product.stock || 1)) {
+      if (existingItem.quantity < (newItem.stock || 1)) {
         existingItem.quantity += 1;
         await cart.save();
         return new Response(
@@ -36,7 +61,7 @@ export async function POST(req) {
       }
     }
 
-    cart.items.push({ ...product, productId, quantity: 1 });
+    cart.items.push(newItem);
     await cart.save();
 
     return new Response(
@@ -47,11 +72,17 @@ export async function POST(req) {
       }),
       { status: 200 }
     );
+
   } catch (error) {
     console.error("Cart POST Error:", error);
-    return new Response(JSON.stringify({ error: "Server error" }), { status: 500 });
+    return new Response(
+      JSON.stringify({ error: error.message || "Server error" }),
+      { status: 500 }
+    );
   }
 }
+
+
 
 export async function PATCH(req) {
   try {
@@ -61,15 +92,14 @@ export async function PATCH(req) {
       return new Response(JSON.stringify({ error: "Not authenticated" }), { status: 401 });
 
     await connectDB();
+        JSON.stringify({ error: "Not authenticated" }),
+        { status: 401 }
 
-    const cart = await Cart.findOne({ userId });
-    if (!cart)
       return new Response(JSON.stringify({ error: "Cart not found" }), { status: 404 });
 
     const item = cart.items.find((i) => String(i.productId) === String(productId));
     if (!item)
       return new Response(JSON.stringify({ error: "Item not found" }), { status: 404 });
-
     // Prevent exceeding stock
     if (quantity > item.stock) {
       return new Response(

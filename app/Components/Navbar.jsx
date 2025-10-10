@@ -8,8 +8,8 @@ import { useCart } from '../context/CartContext';
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { cartCount } = useCart();
-  const { user, isAuthenticated } = useKindeAuth();
+  const { cartCount } = useCart(); // Only use cartCount, no refreshCartCount
+  const { user } = useKindeAuth();
   const profileRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -60,16 +60,22 @@ export default function Navbar() {
 
           {/* Right Side - Cart & Profile */}
           <div className="flex items-center gap-4">
-            {/* Cart Icon with Badge */}
+            {/* Cart Icon with Badge and Red Dot */}
             <Link 
               href="/dashboard/cart" 
               className="relative p-2 hover:text-blue-400 transition-colors duration-200"
             >
               <ShoppingCart size={22} />
+              {/* Red Dot Indicator - Shows when cart has items */}
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse">
-                  {cartCount > 9 ? '9+' : cartCount}
-                </span>
+                <>
+                  {/* Small Red Dot */}
+                  <span className="absolute -top-0.5 -right-0.5 bg-red-500 rounded-full h-3 w-3 flex items-center justify-center animate-pulse"></span>
+                  {/* Count Badge */}
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                    {cartCount > 9 ? '9+' : cartCount}
+                  </span>
+                </>
               )}
             </Link>
 
@@ -177,7 +183,13 @@ export default function Navbar() {
                   className="flex items-center gap-2 py-2 px-4 hover:bg-gray-800 rounded-lg transition-colors duration-200"
                   onClick={() => setIsOpen(false)}
                 >
-                  <ShoppingCart size={18} />
+                  <div className="relative">
+                    <ShoppingCart size={18} />
+                    {/* Red Dot for Mobile */}
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 rounded-full h-2 w-2"></span>
+                    )}
+                  </div>
                   Cart
                   {cartCount > 0 && (
                     <span className="bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold ml-auto">

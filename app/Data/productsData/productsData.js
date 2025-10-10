@@ -28,7 +28,48 @@ import fragnance0603 from './fragnancec/fragnance_tom_ford_extreme03.jpeg'
 import fragnance0701 from './fragnancec/fragnancc_creedaventus.jpeg'
 import fragnance0702 from './fragnancec/fragnance_creed_aventus02.jpeg'
 import fragnance0703 from './fragnancec/fragnance_creed_aventus03.jpeg'
-
+import skincare0100 from './skincaree/skincare_lamaer01.jpeg'
+import skincare0101 from './skincaree/skincare_lamaer02.jpeg'
+import skincare0102 from './skincaree/skincare_lamaer03.jpeg'
+import skincare0200 from './skincaree/skincare_skincuetical01.jpeg'
+import skincare0201 from './skincaree/skincare_skincuetical02.jpeg';
+import skincare0202 from './skincaree/skincare_skincuetical03.jpeg'
+import skincare0300 from './skincaree/skincare_drinkelephant01.jpeg'
+import skincare0301 from './skincaree/skincare_drinkelephant02.jpeg'
+import skincare0302 from './skincaree/skincare_drinkelephant03.jpeg'
+import grocery0101 from './Grocery/grocery_organic_creative01.jpeg'
+import grocery0102 from './Grocery/grocery_organic_creative02.jpeg'
+import grocery0103 from './Grocery/grocery_organic_creative03.jpeg'
+import grocery0201 from './Grocery/grocery_extra_virggin_oil01.jpeg'
+import grocery0202 from './Grocery/grocery_extra_virggin_oil02.jpeg'
+import grocery0203 from './Grocery/grocery_organic_creative03.jpeg'
+import grocery0301 from './Grocery/grocery_artisin00.jpeg'
+import grocery0302 from './Grocery/grocery_artisin01.jpeg'
+import grocery0303 from './Grocery/grocery_artisin02.jpeg';
+import homedecor0101 from './HomeDecor/homedecorceramic01.jpeg'
+import homedecor0102 from './HomeDecor/homedecorceramic02.jpeg'
+import homedecor0103 from './HomeDecor/homedecorceramic03.jpeg'
+import homedecor0201 from './HomeDecor/homescendianart01.jpeg'
+import homedecor0202 from './HomeDecor/homescendianart02.jpeg'
+import homedecor0203 from './HomeDecor/homescendianart03.jpeg'
+import homedecor0301 from './HomeDecor/homedecorlamp01.jpeg'
+import homedecor0302 from './HomeDecor/homedecorlamp02.jpeg'
+import homedecor0303 from './HomeDecor/homedecorlamp03.jpeg'
+import launched0101 from './launchedproduct/launches01.jpeg'
+import launched0102 from './launchedproduct/launched0102.jpeg'
+import launched0103 from './launchedproduct/launched0103.jpeg'
+import launched0201 from './launchedproduct/launched02.jpeg'
+import launched0202 from './launchedproduct/launched0202.jpeg'
+import launched0203 from './launchedproduct/launched0203.jpeg'
+import launched0301 from './launchedproduct/launched03.jpeg'
+import launched0302 from './launchedproduct/launched0302.jpeg'
+import launched0303 from './launchedproduct/launched0303.jpeg'
+import featured0101 from './featured/featured01.jpeg'
+import featured0102 from './featured/featured0102.jpeg'
+import featured0103 from './featured/featured0103.jpeg'
+import feature0201 from './featured/featured02.jpeg'
+import feature0202 from './featured/featured0202.jpeg'
+import feature0203 from './featured/featured0203.jpeg'
 
 // data/productsData.js
 export const productsData = [
@@ -47,7 +88,6 @@ export const productsData = [
     images: [
       simg0102,
       simg0103
-
         ]
   },
   {
@@ -213,11 +253,10 @@ fragnance0503,
     stock: 45,
     brand: "La Mer",
     category: "skincare",
-    thumbnail: "https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg",
+    thumbnail: skincare0100,
     images: [
-      "https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg",
-      "https://images.pexels.com/photos/4202325/pexels-photo-4202325.jpeg",
-      "https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg"
+      skincare0101,
+      skincare0102,
     ]
   },
   {
@@ -230,11 +269,10 @@ fragnance0503,
     stock: 38,
     brand: "Skinceuticals",
     category: "skincare",
-    thumbnail: "https://images.pexels.com/photos/4202325/pexels-photo-4202325.jpeg",
+    thumbnail: skincare0200,
     images: [
-      "https://images.pexels.com/photos/4202325/pexels-photo-4202325.jpeg",
-      "https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg",
-      "https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg"
+     skincare0201,
+      skincare0202,
     ]
   },
   {
@@ -247,47 +285,13 @@ fragnance0503,
     stock: 72,
     brand: "Drunk Elephant",
     category: "skincare",
-    thumbnail: "https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg",
+    thumbnail:skincare0300,
     images: [
-      "https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg",
-      "https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg",
-      "https://images.pexels.com/photos/4202325/pexels-photo-4202325.jpeg"
+     skincare0301,
+      skincare0302,
     ]
   },
-  {
-    id: 19,
-    title: "Sunday Riley Good Genes",
-    description: "Lactic acid treatment for radiant complexion",
-    price: 85,
-    discountPercentage: 11.2,
-    rating: 4.5,
-    stock: 56,
-    brand: "Sunday Riley",
-    category: "skincare",
-    thumbnail: "https://images.pexels.com/photos/4041391/pexels-photo-4041391.jpeg",
-    images: [
-      "https://images.pexels.com/photos/4041391/pexels-photo-4041391.jpeg",
-      "https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg",
-      "https://images.pexels.com/photos/4202325/pexels-photo-4202325.jpeg"
-    ]
-  },
-  {
-    id: 20,
-    title: "Tatcha The Water Cream",
-    description: "Oil-free moisturizer with Japanese nutrients",
-    price: 68,
-    discountPercentage: 8.7,
-    rating: 4.4,
-    stock: 81,
-    brand: "Tatcha",
-    category: "skincare",
-    thumbnail: "https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg",
-    images: [
-      "https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg",
-      "https://images.pexels.com/photos/4041391/pexels-photo-4041391.jpeg",
-      "https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg"
-    ]
-  },
+
 
   // Groceries
   {
@@ -300,11 +304,10 @@ fragnance0503,
     stock: 156,
     brand: "Nature's Best",
     category: "groceries",
-    thumbnail: "https://images.pexels.com/photos/3338497/pexels-photo-3338497.jpeg",
+    thumbnail:grocery0101,
     images: [
-      "https://images.pexels.com/photos/3338497/pexels-photo-3338497.jpeg",
-      "https://images.pexels.com/photos/1274760/pexels-photo-1274760.jpeg",
-      "https://images.pexels.com/photos/4110256/pexels-photo-4110256.jpeg"
+      grocery0102,
+      grocery0103,
     ]
   },
   {
@@ -317,11 +320,10 @@ fragnance0503,
     stock: 89,
     brand: "Mediterranean Gold",
     category: "groceries",
-    thumbnail: "https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg",
+    thumbnail: grocery0201,
     images: [
-      "https://images.pexels.com/photos/3373739/pexels-photo-3373739.jpeg",
-      "https://images.pexels.com/photos/3338497/pexels-photo-3338497.jpeg",
-      "https://images.pexels.com/photos/1274760/pexels-photo-1274760.jpeg"
+      grocery0202,
+      grocery0203,
     ]
   },
   {
@@ -334,45 +336,10 @@ fragnance0503,
     stock: 34,
     brand: "Bread & Butter",
     category: "groceries",
-    thumbnail: "https://images.pexels.com/photos/1274760/pexels-photo-1274760.jpeg",
+    thumbnail: grocery0301,
     images: [
-      "https://images.pexels.com/photos/1274760/pexels-photo-1274760.jpeg",
-      "https://images.pexels.com/photos/3338497/pexels-photo-3338497.jpeg",
-      "https://images.pexels.com/photos/4110256/pexels-photo-4110256.jpeg"
-    ]
-  },
-  {
-    id: 24,
-    title: "Organic Blueberries",
-    description: "Fresh organic blueberries packed with antioxidants",
-    price: 4.99,
-    discountPercentage: 10.5,
-    rating: 4.4,
-    stock: 67,
-    brand: "Berry Fresh",
-    category: "groceries",
-    thumbnail: "https://images.pexels.com/photos/4110256/pexels-photo-4110256.jpeg",
-    images: [
-      "https://images.pexels.com/photos/4110256/pexels-photo-4110256.jpeg",
-      "https://images.pexels.com/photos/3338497/pexels-photo-3338497.jpeg",
-      "https://images.pexels.com/photos/1274760/pexels-photo-1274760.jpeg"
-    ]
-  },
-  {
-    id: 25,
-    title: "Gourmet Coffee Beans",
-    description: "Single-origin coffee beans from Ethiopia",
-    price: 16.99,
-    discountPercentage: 7.9,
-    rating: 4.8,
-    stock: 112,
-    brand: "Morning Brew",
-    category: "groceries",
-    thumbnail: "https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg",
-    images: [
-      "https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg",
-      "https://images.pexels.com/photos/3338497/pexels-photo-3338497.jpeg",
-      "https://images.pexels.com/photos/1274760/pexels-photo-1274760.jpeg"
+grocery0302,
+    grocery0303,
     ]
   },
 
@@ -387,11 +354,10 @@ fragnance0503,
     stock: 78,
     brand: "Home Art",
     category: "home-decoration",
-    thumbnail: "https://images.pexels.com/photos/4846431/pexels-photo-4846431.jpeg",
+    thumbnail: homedecor0101,
     images: [
-      "https://images.pexels.com/photos/4846431/pexels-photo-4846431.jpeg",
-      "https://images.pexels.com/photos/5824497/pexels-photo-5824497.jpeg",
-      "https://images.pexels.com/photos/6311292/pexels-photo-6311292.jpeg"
+      homedecor0102,
+      homedecor0103,
     ]
   },
   {
@@ -404,11 +370,10 @@ fragnance0503,
     stock: 45,
     brand: "Nordic Design",
     category: "home-decoration",
-    thumbnail: "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
+    thumbnail:homedecor0201,
     images: [
-      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
-      "https://images.pexels.com/photos/4846431/pexels-photo-4846431.jpeg",
-      "https://images.pexels.com/photos/5824497/pexels-photo-5824497.jpeg"
+     homedecor0202,
+     homedecor0203
     ]
   },
   {
@@ -421,47 +386,13 @@ fragnance0503,
     stock: 32,
     brand: "Lumi Home",
     category: "home-decoration",
-    thumbnail: "https://images.pexels.com/photos/5824497/pexels-photo-5824497.jpeg",
+    thumbnail: homedecor0301,
     images: [
-      "https://images.pexels.com/photos/5824497/pexels-photo-5824497.jpeg",
-      "https://images.pexels.com/photos/4846431/pexels-photo-4846431.jpeg",
-      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg"
+      homedecor0302,
+      homedecor0303,
     ]
   },
-  {
-    id: 29,
-    title: "Velvet Throw Pillows",
-    description: "Set of 3 luxury velvet pillows for sofa decoration",
-    price: 65,
-    discountPercentage: 20.1,
-    rating: 4.4,
-    stock: 91,
-    brand: "Comfort Living",
-    category: "home-decoration",
-    thumbnail: "https://images.pexels.com/photos/6311292/pexels-photo-6311292.jpeg",
-    images: [
-      "https://images.pexels.com/photos/6311292/pexels-photo-6311292.jpeg",
-      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
-      "https://images.pexels.com/photos/4846431/pexels-photo-4846431.jpeg"
-    ]
-  },
-  {
-    id: 30,
-    title: "Geometric Wall Shelf",
-    description: "Modern geometric wall shelf for books and decor",
-    price: 75,
-    discountPercentage: 14.7,
-    rating: 4.3,
-    stock: 56,
-    brand: "Urban Design",
-    category: "home-decoration",
-    thumbnail: "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
-    images: [
-      "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
-      "https://images.pexels.com/photos/6311292/pexels-photo-6311292.jpeg",
-      "https://images.pexels.com/photos/5824497/pexels-photo-5824497.jpeg"
-    ]
-  },
+
 
   // Newly Launched Products
   {
@@ -472,11 +403,10 @@ fragnance0503,
     price: 249.99,
     stock: 12,
     category: "launched",
-    thumbnail: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg",
+    thumbnail:launched0101,
     images: [
-      "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg",
-      "https://images.pexels.com/photos/6153350/pexels-photo-6153350.jpeg",
-      "https://images.pexels.com/photos/5473298/pexels-photo-5473298.jpeg"
+      launched0102,
+      launched0103,
     ],
     discountPercentage: 0,
     rating: 4.8,
@@ -490,11 +420,10 @@ fragnance0503,
     price: 299.99,
     stock: 25,
     category: "launched",
-    thumbnail: "https://images.pexels.com/photos/1275929/pexels-photo-1275929.jpeg",
+    thumbnail: launched0201,
     images: [
-      "https://images.pexels.com/photos/1275929/pexels-photo-1275929.jpeg",
-      "https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg",
-      "https://images.pexels.com/photos/1714205/pexels-photo-1714205.jpeg"
+      launched0202,
+      launched0203,
     ],
     discountPercentage: 0,
     rating: 4.6,
@@ -508,142 +437,16 @@ fragnance0503,
     price: 59.99,
     stock: 50,
     category: "launched",
-    thumbnail: "https://images.pexels.com/photos/2115256/pexels-photo-2115256.jpeg",
+    thumbnail: launched0301,
     images: [
-      "https://images.pexels.com/photos/2115256/pexels-photo-2115256.jpeg",
-      "https://images.pexels.com/photos/2047905/pexels-photo-2047905.jpeg",
-      "https://images.pexels.com/photos/119550/pexels-photo-119550.jpeg"
+      launched0302,
+      launched0303,
     ],
     discountPercentage: 0,
     rating: 4.4,
     brand: "FlexType"
   },
-  {
-    id: 104,
-    title: "Portable Projector Mini",
-    description: "Pocket-sized projector for movies, gaming, and presentations on the go",
-    benefit: "Turns any wall into a cinema screen",
-    price: 189.99,
-    stock: 30,
-    category: "launched",
-    thumbnail: "https://images.pexels.com/photos/2528114/pexels-photo-2528114.jpeg",
-    images: [
-      "https://images.pexels.com/photos/2528114/pexels-photo-2528114.jpeg",
-      "https://images.pexels.com/photos/2528115/pexels-photo-2528115.jpeg",
-      "https://images.pexels.com/photos/2528116/pexels-photo-2528116.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.5,
-    brand: "PocketBeam"
-  },
-  {
-    id: 105,
-    title: "Smart Drone Explorer",
-    description: "AI-powered drone with obstacle avoidance and 4K aerial photography",
-    benefit: "Capture stunning shots from the sky",
-    price: 499.99,
-    stock: 8,
-    category: "launched",
-    thumbnail: "https://images.pexels.com/photos/1043514/pexels-photo-1043514.jpeg",
-    images: [
-      "https://images.pexels.com/photos/1043514/pexels-photo-1043514.jpeg",
-      "https://images.pexels.com/photos/12715956/pexels-photo-12715956.jpeg",
-      "https://images.pexels.com/photos/12715957/pexels-photo-12715957.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.9,
-    brand: "SkyView"
-  },
-  {
-    id: 106,
-    title: "Next-Gen Gaming Mouse",
-    description: "High precision optical sensor with customizable RGB lighting",
-    benefit: "Enhances gaming accuracy and performance",
-    price: 79.99,
-    stock: 40,
-    category: "launched",
-    thumbnail: "https://images.pexels.com/photos/2115217/pexels-photo-2115217.jpeg",
-    images: [
-      "https://images.pexels.com/photos/2115217/pexels-photo-2115217.jpeg",
-      "https://images.pexels.com/photos/2115256/pexels-photo-2115256.jpeg",
-      "https://images.pexels.com/photos/1293265/pexels-photo-1293265.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.7,
-    brand: "GamePro"
-  },
-  {
-    id: 107,
-    title: "Smart Thermostat Pro",
-    description: "Automatically adjusts your home temperature based on preferences",
-    benefit: "Saves energy and keeps comfort optimized",
-    price: 139.99,
-    stock: 22,
-    category: "launched",
-    thumbnail: "https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg",
-    images: [
-      "https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg",
-      "https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg",
-      "https://images.pexels.com/photos/1080696/pexels-photo-1080696.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.6,
-    brand: "HomeComfort"
-  },
-  {
-    id: 108,
-    title: "Wireless Earbuds Max",
-    description: "Crystal-clear sound with noise isolation and 30-hour battery life",
-    benefit: "Perfect for long listening sessions",
-    price: 99.99,
-    stock: 45,
-    category: "launched",
-    thumbnail: "https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg",
-    images: [
-      "https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg",
-      "https://images.pexels.com/photos/1649683/pexels-photo-1649683.jpeg",
-      "https://images.pexels.com/photos/1649684/pexels-photo-1649684.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.8,
-    brand: "SoundMax"
-  },
-  {
-    id: 109,
-    title: "Smart Desk Lamp",
-    description: "Adjustable LED lighting with touch control and wireless charging base",
-    benefit: "Modern lighting with convenience",
-    price: 59.99,
-    stock: 33,
-    category: "launched",
-    thumbnail: "https://images.pexels.com/photos/7031876/pexels-photo-7031876.jpeg",
-    images: [
-      "https://images.pexels.com/photos/7031876/pexels-photo-7031876.jpeg",
-      "https://images.pexels.com/photos/7031877/pexels-photo-7031877.jpeg",
-      "https://images.pexels.com/photos/7031878/pexels-photo-7031878.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.5,
-    brand: "LumiTech"
-  },
-  {
-    id: 110,
-    title: "Virtual Reality Headset",
-    description: "Immersive VR experience with 120° field of view and HD resolution",
-    benefit: "Brings entertainment to the next level",
-    price: 349.99,
-    stock: 15,
-    category: "launched",
-    thumbnail: "https://images.pexels.com/photos/4305275/pexels-photo-4305275.jpeg",
-    images: [
-      "https://images.pexels.com/photos/4305275/pexels-photo-4305275.jpeg",
-      "https://images.pexels.com/photos/4305276/pexels-photo-4305276.jpeg",
-      "https://images.pexels.com/photos/4305277/pexels-photo-4305277.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.7,
-    brand: "VReality"
-  },
+
 
   // Featured Products
   {
@@ -654,11 +457,10 @@ fragnance0503,
     price: 129.99,
     stock: 45,
     category: "featured",
-    thumbnail: "https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg",
+    thumbnail:featured0101 ,
     images: [
-      "https://images.pexels.com/photos/437037/pexels-photo-437037.jpeg",
-      "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg",
-      "https://images.pexels.com/photos/1649683/pexels-photo-1649683.jpeg"
+      featured0102,
+     featured0103,
     ],
     discountPercentage: 0,
     rating: 4.8,
@@ -672,160 +474,16 @@ fragnance0503,
     price: 199.99,
     stock: 32,
     category: "featured",
-    thumbnail: "https://images.pexels.com/photos/1649683/pexels-photo-1649683.jpeg",
+    thumbnail: feature0201,
     images: [
-      "https://images.pexels.com/photos/1649683/pexels-photo-1649683.jpeg",
-      "https://images.pexels.com/photos/1649771/pexels-photo-1649771.jpeg",
-      "https://images.pexels.com/photos/1649684/pexels-photo-1649684.jpeg"
+      feature0202,
+     feature0203,
     ],
     discountPercentage: 0,
     rating: 4.9,
     brand: "AudioPro"
   },
-  {
-    id: 203,
-    title: "UltraHD 4K Action Camera",
-    description: "Capture your adventures with stunning 4K clarity",
-    benefits: ["Waterproof up to 30m", "Wi-Fi control", "Stabilized footage"],
-    price: 249.99,
-    stock: 28,
-    category: "featured",
-    thumbnail: "https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg",
-    images: [
-      "https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg",
-      "https://images.pexels.com/photos/1043514/pexels-photo-1043514.jpeg",
-      "https://images.pexels.com/photos/12715956/pexels-photo-12715956.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.7,
-    brand: "ActionCam"
-  },
-  {
-    id: 204,
-    title: "Ergonomic Wireless Keyboard",
-    description: "Comfortable typing experience with durable key switches",
-    benefits: ["Rechargeable", "Ergonomic design", "Silent keys"],
-    price: 69.99,
-    stock: 70,
-    category: "featured",
-    thumbnail: "https://images.pexels.com/photos/2115256/pexels-photo-2115256.jpeg",
-    images: [
-      "https://images.pexels.com/photos/2115256/pexels-photo-2115256.jpeg",
-      "https://images.pexels.com/photos/2047905/pexels-photo-2047905.jpeg",
-      "https://images.pexels.com/photos/119550/pexels-photo-119550.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.6,
-    brand: "ErgoType"
-  },
-  {
-    id: 205,
-    title: "Smart LED Desk Lamp",
-    description: "Adjustable color and brightness to match your mood",
-    benefits: ["App control", "Energy efficient", "Touch dimmer"],
-    price: 59.99,
-    stock: 56,
-    category: "featured",
-    thumbnail: "https://images.pexels.com/photos/7031876/pexels-photo-7031876.jpeg",
-    images: [
-      "https://images.pexels.com/photos/7031876/pexels-photo-7031876.jpeg",
-      "https://images.pexels.com/photos/7031877/pexels-photo-7031877.jpeg",
-      "https://images.pexels.com/photos/7031878/pexels-photo-7031878.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.5,
-    brand: "LumiSmart"
-  },
-  {
-    id: 206,
-    title: "Portable Bluetooth Speaker",
-    description: "Compact size with deep bass and 360° sound",
-    benefits: ["12-hour playtime", "Splash-proof", "Hands-free calls"],
-    price: 89.99,
-    stock: 80,
-    category: "featured",
-    thumbnail: "https://images.pexels.com/photos/1608276/pexels-photo-1608276.jpeg",
-    images: [
-      "https://images.pexels.com/photos/1608276/pexels-photo-1608276.jpeg",
-      "https://images.pexels.com/photos/1608277/pexels-photo-1608277.jpeg",
-      "https://images.pexels.com/photos/1608278/pexels-photo-1608278.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.4,
-    brand: "SoundSphere"
-  },
-  {
-    id: 207,
-    title: "Smart Wi-Fi Plug Mini",
-    description: "Control your appliances remotely using voice assistants",
-    benefits: ["Alexa/Google compatible", "Energy monitoring", "Timer function"],
-    price: 24.99,
-    stock: 120,
-    category: "featured",
-    thumbnail: "https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg",
-    images: [
-      "https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg",
-      "https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg",
-      "https://images.pexels.com/photos/1080696/pexels-photo-1080696.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.3,
-    brand: "SmartPlug"
-  },
-  {
-    id: 208,
-    title: "HD Video Doorbell",
-    description: "See who's at your door anytime, anywhere",
-    benefits: ["Motion detection", "Night vision", "2-way audio"],
-    price: 149.99,
-    stock: 36,
-    category: "featured",
-    thumbnail: "https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg",
-    images: [
-      "https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg",
-      "https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg",
-      "https://images.pexels.com/photos/1080696/pexels-photo-1080696.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.8,
-    brand: "SecureView"
-  },
-  {
-    id: 209,
-    title: "Smart Home Security Camera",
-    description: "Keep your home safe with AI-powered surveillance",
-    benefits: ["Cloud storage", "HD night vision", "Motion alerts"],
-    price: 179.99,
-    stock: 48,
-    category: "featured",
-    thumbnail: "https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg",
-    images: [
-      "https://images.pexels.com/photos/1080721/pexels-photo-1080721.jpeg",
-      "https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg",
-      "https://images.pexels.com/photos/1080696/pexels-photo-1080696.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.7,
-    brand: "HomeGuard"
-  },
-  {
-    id: 210,
-    title: "Fast Wireless Charger Pad",
-    description: "Charge your phone quickly without messy cables",
-    benefits: ["15W fast charge", "Non-slip pad", "LED indicator"],
-    price: 39.99,
-    stock: 95,
-    category: "featured",
-    thumbnail: "https://images.pexels.com/photos/127025933/pexels-photo-127025933.jpeg",
-    images: [
-      "https://images.pexels.com/photos/127025933/pexels-photo-127025933.jpeg",
-      "https://images.pexels.com/photos/127025934/pexels-photo-127025934.jpeg",
-      "https://images.pexels.com/photos/127025935/pexels-photo-127025935.jpeg"
-    ],
-    discountPercentage: 0,
-    rating: 4.6,
-    brand: "ChargeFast"
-  }
+
 ];
 
 // Helper functions to get specific product types

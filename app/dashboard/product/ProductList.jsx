@@ -14,9 +14,10 @@ import {
   X,
   Image as ImageIcon
 } from "lucide-react";
-import Image from "next/image"; // Import Next.js Image component
+import Image from "next/image";
 import productsData from "../../Data/productsData/productsData";
 import Link from "next/link";
+import { useCart } from '../../context/CartContext'; // Import the cart context
 
 export default function ProductList({ 
   products = [], 
@@ -30,8 +31,9 @@ export default function ProductList({
   const [productsPerPage] = useState(8);
   const [selectedCategory, setSelectedCategory] = useState(category || "all");
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
-  const [imageErrors, setImageErrors] = useState({}); // Track image loading errors
+  const [imageErrors, setImageErrors] = useState({});
   const { isAuthenticated, user } = useKindeAuth();
+  const { updateCartCount } = useCart(); // Get updateCartCount from context
 
   // Get all unique categories
   const allCategories = ["all", ...new Set(productsData
@@ -45,7 +47,7 @@ export default function ProductList({
       product => product.category !== "launched" && product.category !== "featured"
     );
     setDisplayProducts(filteredProducts);
-  }, []); // Empty dependency array - run only once
+  }, []);
 
   // Handle category changes separately
   useEffect(() => {
@@ -89,6 +91,7 @@ export default function ProductList({
     }
   }, [category]);
 
+  // Fetch cart data when user is logged in
   useEffect(() => {
     const fetchCart = async () => {
       if (user) {
@@ -96,13 +99,19 @@ export default function ProductList({
           const res = await fetch(`/api/cart?userId=${user.id}`);
           const data = await res.json();
           setCart(data.cart);
+          
+          // Update global cart count when cart data is loaded
+          if (data.cart?.items) {
+            const totalItems = data.cart.items.reduce((acc, item) => acc + item.quantity, 0);
+            updateCartCount(totalItems);
+          }
         } catch (error) {
           console.error("Error fetching cart:", error);
         }
       }
     };
     fetchCart();
-  }, [user]);
+  }, [user, updateCartCount]);
 
   // Handle image loading errors
   const handleImageError = (productId) => {
@@ -115,20 +124,17 @@ export default function ProductList({
   // Get optimized image URL or fallback
   const getOptimizedImage = (product) => {
     if (imageErrors[product.id]) {
-      return '/images/placeholder-product.jpg'; // Fallback image
+      return '/images/placeholder-product.jpg';
     }
     
-    // If thumbnail exists, use it
     if (product.thumbnail) {
       return product.thumbnail;
     }
     
-    // If image exists, use it
     if (product.image) {
       return product.image;
     }
     
-    // Fallback to placeholder
     return '/images/placeholder-product.jpg';
   };
 
@@ -153,7 +159,7 @@ export default function ProductList({
     const cartProduct = {
       productId: String(product.id),
       name: product.title,
-      image: getOptimizedImage(product), // Use optimized image URL
+      image: getOptimizedImage(product),
       price: product.price,
       category: product.category,
       quantity: 1,
@@ -172,6 +178,12 @@ export default function ProductList({
       if (res.ok) {
         toast.success(data.message || "Item added to your cart!");
         setCart(data.cart);
+        
+        // Update global cart count after successful addition
+        if (data.cart?.items) {
+          const totalItems = data.cart.items.reduce((acc, item) => acc + item.quantity, 0);
+          updateCartCount(totalItems);
+        }
       } else if (data.error === "Out of stock") {
         toast.error("Item is out of stock!");
       } else {

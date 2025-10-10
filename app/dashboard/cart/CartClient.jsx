@@ -1,44 +1,51 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import QuantityControls from "./QuantityControls";
 import { Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useCart } from '../../context/CartContext';
 
 export default function CartClient({ cartData, userId }) {
   const [cart, setCart] = useState(cartData);
   const [isRemoving, setIsRemoving] = useState(null);
   const router = useRouter();
+  const { updateCartCount } = useCart();
 
-  // Calculate subtotal dynamically
-  const subtotal = cart.items.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-
-  // Calculate total items count for navbar badge
+  // Calculate total items count
   const totalItemsCount = cart.items.reduce(
     (acc, item) => acc + item.quantity,
     0
   );
 
-  // Update navbar cart count (you might want to use context or state management for this)
-  useEffect(() => {
-    // Dispatch custom event to update navbar
-    const event = new CustomEvent('cartUpdate', { detail: { count: totalItemsCount } });
-    window.dispatchEvent(event);
-  }, [totalItemsCount]);
+  // Calculate subtotal
+  const subtotal = cart.items.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
-  // Handle quantity update callback from child component
+  // Update cart count IMMEDIATELY when component loads
+  useEffect(() => {
+    updateCartCount(totalItemsCount);
+  }, [totalItemsCount, updateCartCount]);
+
+  // Handle quantity update
   const handleQuantityChange = (productId, newQty) => {
-    setCart((prevCart) => ({
-      ...prevCart,
-      items: prevCart.items.map((item) =>
-        item.productId === productId
-          ? { ...item, quantity: newQty }
-          : item
-      ),
-    }));
+    setCart((prevCart) => {
+      const updatedCart = {
+        ...prevCart,
+        items: prevCart.items.map((item) =>
+          item.productId === productId
+            ? { ...item, quantity: newQty }
+            : item
+        ),
+      };
+      
+      // Update cart count immediately
+      const newTotal = updatedCart.items.reduce((acc, item) => acc + item.quantity, 0);
+      updateCartCount(newTotal);
+      
+      return updatedCart;
+    });
   };
 
   // Handle item removal
@@ -61,10 +68,18 @@ export default function CartClient({ cartData, userId }) {
 
       if (response.ok) {
         // Remove item from local state
-        setCart((prevCart) => ({
-          ...prevCart,
-          items: prevCart.items.filter((item) => item.productId !== productId),
-        }));
+        setCart((prevCart) => {
+          const updatedCart = {
+            ...prevCart,
+            items: prevCart.items.filter((item) => item.productId !== productId),
+          };
+          
+          // Update cart count immediately
+          const newTotal = updatedCart.items.reduce((acc, item) => acc + item.quantity, 0);
+          updateCartCount(newTotal);
+          
+          return updatedCart;
+        });
       } else {
         console.error("Failed to remove item:", data.error);
       }
@@ -77,7 +92,25 @@ export default function CartClient({ cartData, userId }) {
 
   // Continue shopping function
   const continueShopping = () => {
-    router.push("/dashboard/products");
+    router.push("/dashboard/product");
+  };
+
+  // Handle checkout - pass cart data to payment page
+  const handleCheckout = () => {
+    // Prepare cart data for payment page
+    const checkoutData = {
+      items: cart.items,
+      subtotal: subtotal,
+      totalItems: totalItemsCount
+    };
+
+    // Store in sessionStorage for the payment page
+    sessionStorage.setItem('checkoutCart', JSON.stringify(checkoutData));
+    
+    // Also store in localStorage as backup
+    localStorage.setItem('checkoutCart_backup', JSON.stringify(checkoutData));
+    
+    router.push("/dashboard/checkout/payment");
   };
 
   if (!cart.items || cart.items.length === 0) {
@@ -203,7 +236,10 @@ export default function CartClient({ cartData, userId }) {
               <span>${subtotal.toFixed(2)}</span>
             </div>
 
-            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg mb-4">
+            <button 
+              onClick={handleCheckout}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg mb-4"
+            >
               Proceed to Checkout
             </button>
 

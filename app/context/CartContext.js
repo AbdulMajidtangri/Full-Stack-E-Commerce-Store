@@ -6,60 +6,63 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cartCount, setCartCount] = useState(0);
 
-  // Load cart count from localStorage on initial load
+  // Initialize from localStorage and listen for updates
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedCartCount = localStorage.getItem('cartCount');
-      if (savedCartCount) {
-        setCartCount(parseInt(savedCartCount));
-      }
+    // Get initial count from localStorage
+    const storedCount = localStorage.getItem('cartCount');
+    if (storedCount) {
+      setCartCount(parseInt(storedCount));
     }
+
+    // Listen for cart updates from other components
+    const handleCartUpdate = (event) => {
+      const newCount = event.detail.count;
+      setCartCount(newCount);
+      localStorage.setItem('cartCount', newCount.toString());
+    };
+
+    // Listen for storage events (from other tabs)
+    const handleStorageChange = (event) => {
+      if (event.key === 'cartCount') {
+        const newCount = parseInt(event.newValue || '0');
+        setCartCount(newCount);
+      }
+    };
+
+    window.addEventListener('cartUpdate', handleCartUpdate);
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('cartUpdate', handleCartUpdate);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
-  // Save cart count to localStorage whenever it changes
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cartCount', cartCount.toString());
-    }
-  }, [cartCount]);
-
-  // Function to update cart count
-  const updateCartCount = (count) => {
-    setCartCount(count);
+  // Function to update cart count globally
+  const updateCartCount = (newCount) => {
+    setCartCount(newCount);
+    localStorage.setItem('cartCount', newCount.toString());
+    window.dispatchEvent(new CustomEvent('cartUpdate', { 
+      detail: { count: newCount } 
+    }));
   };
 
-  // Function to increment cart count
-  const incrementCartCount = (amount = 1) => {
-    setCartCount(prev => prev + amount);
-  };
-
-  // Function to decrement cart count
-  const decrementCartCount = (amount = 1) => {
-    setCartCount(prev => Math.max(0, prev - amount));
-  };
-
-  // Function to reset cart count
-  const resetCartCount = () => {
-    setCartCount(0);
+  const value = {
+    cartCount,
+    updateCartCount
   };
 
   return (
-    <CartContext.Provider value={{ 
-      cartCount, 
-      updateCartCount, 
-      incrementCartCount, 
-      decrementCartCount,
-      resetCartCount
-    }}>
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );
 }
 
-export const useCart = () => {
+export function useCart() {
   const context = useContext(CartContext);
   if (!context) {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;
-};
+}

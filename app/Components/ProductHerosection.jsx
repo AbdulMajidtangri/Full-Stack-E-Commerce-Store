@@ -2,10 +2,11 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, Star, Shield, Truck, Zap, Home, Smartphone, Sparkles } from "lucide-react";
-
+import { ChevronRight } from 'lucide-react'
 export default function ProductHerosection() {
   return (
     <section className="relative bg-black text-white min-h-screen flex items-center justify-center py-8 lg:py-0 overflow-hidden">
+     
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent"></div>
       
@@ -19,6 +20,15 @@ export default function ProductHerosection() {
           
           {/* Left Content */}
           <div className="space-y-6 lg:space-y-8 text-center lg:text-left">
+             {/* Breadcrumb */}
+        <nav className="mb-6">
+          <ol className="flex items-center space-x-2 text-sm text-gray-400">
+            <li><Link href="/" className="hover:text-blue-400 transition-colors">Home</Link></li>
+            <li><ChevronRight size={16} /></li>
+            <li><Link href="/dashboard/product" className="hover:text-blue-400 transition-colors">Products</Link></li>
+         
+          </ol>
+        </nav>
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-2">
               <Zap className="w-4 h-4 text-blue-400" />
