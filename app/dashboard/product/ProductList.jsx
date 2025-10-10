@@ -17,7 +17,7 @@ import {
 import Image from "next/image";
 import productsData from "../../Data/productsData/productsData";
 import Link from "next/link";
-import { useCart } from '../../context/CartContext'; // Import the cart context
+import { useCart } from '../../context/CartContext';
 
 export default function ProductList({ 
   products = [], 
@@ -33,7 +33,7 @@ export default function ProductList({
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const [imageErrors, setImageErrors] = useState({});
   const { isAuthenticated, user } = useKindeAuth();
-  const { updateCartCount } = useCart(); // Get updateCartCount from context
+  const { updateCartCount } = useCart();
 
   // Get all unique categories
   const allCategories = ["all", ...new Set(productsData
@@ -100,7 +100,6 @@ export default function ProductList({
           const data = await res.json();
           setCart(data.cart);
           
-          // Update global cart count when cart data is loaded
           if (data.cart?.items) {
             const totalItems = data.cart.items.reduce((acc, item) => acc + item.quantity, 0);
             updateCartCount(totalItems);
@@ -179,7 +178,6 @@ export default function ProductList({
         toast.success(data.message || "Item added to your cart!");
         setCart(data.cart);
         
-        // Update global cart count after successful addition
         if (data.cart?.items) {
           const totalItems = data.cart.items.reduce((acc, item) => acc + item.quantity, 0);
           updateCartCount(totalItems);
@@ -340,7 +338,7 @@ export default function ProductList({
         )}
       </div>
 
-      {/* Products Grid */}
+      {/* Products Grid - CONSISTENT CARD SIZING */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-6">
         {currentProducts.map((product) => {
           const quantityInCart = getQuantityInCart(product.id);
@@ -350,7 +348,7 @@ export default function ProductList({
           return (
             <div
               key={product.id}
-              className="group relative bg-neutral-900 border border-gray-800 rounded-2xl shadow-lg hover:shadow-blue-500/20 hover:scale-105 transition-transform duration-300 overflow-hidden flex flex-col"
+              className="group relative bg-neutral-900 border border-gray-800 rounded-2xl shadow-lg hover:shadow-blue-500/20 hover:scale-105 transition-all duration-300 overflow-hidden flex flex-col h-[480px]"
             >
               {/* Category Badge */}
               <div className="absolute top-2 left-2 z-10">
@@ -367,23 +365,21 @@ export default function ProductList({
                 </span>
               </div>
 
-              {/* Product Image */}
-              <Link href={`/dashboard/product/${product.id}`} className="block">
-                <div className="overflow-hidden bg-white flex justify-center items-center h-56 relative">
+              {/* Product Image - FIXED HEIGHT */}
+              <Link href={`/dashboard/product/${product.id}`} className="block flex-shrink-0">
+                <div className="overflow-hidden bg-white flex justify-center items-center h-48">
                   {imageErrors[product.id] ? (
-                    // Fallback when image fails to load
                     <div className="flex flex-col items-center justify-center w-full h-full bg-gray-200 text-gray-500">
                       <ImageIcon size={48} className="mb-2" />
                       <span className="text-sm">Image not available</span>
                     </div>
                   ) : (
-                    // Next.js Optimized Image
                     <Image
                       src={imageUrl}
                       alt={product.title}
-                      width={300}
-                      height={225}
-                      className="object-contain h-52 w-full group-hover:scale-110 transition-transform duration-300"
+                      width={280}
+                      height={192}
+                      className="object-contain h-44 w-full group-hover:scale-110 transition-transform duration-300"
                       onError={() => handleImageError(product.id)}
                       placeholder="blur"
                       blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R"
@@ -392,18 +388,20 @@ export default function ProductList({
                 </div>
               </Link>
 
-              {/* Product Info */}
-              <div className="p-5 flex flex-col flex-1">
-                <Link href={`/dashboard/product/${product.id}`} className="block mb-1">
+              {/* Product Info - FLEXIBLE CONTENT AREA */}
+              <div className="p-4 flex flex-col flex-1">
+                <Link href={`/dashboard/product/${product.id}`} className="block mb-1 flex-shrink-0">
                   <h2 className="font-bold text-lg text-white truncate hover:text-blue-400 transition-colors">
                     {product.title}
                   </h2>
                 </Link>
                 
-                <p className="text-gray-400 text-sm mb-2 capitalize">{product.category}</p>
-                <p className="text-xl font-bold text-blue-400 mb-3">${product.price}</p>
+                <p className="text-gray-400 text-sm mb-2 capitalize flex-shrink-0">{product.category}</p>
+                <p className="text-xl font-bold text-blue-400 mb-3 flex-shrink-0">
+                  ${typeof product.price === 'number' ? product.price.toFixed(2) : product.price}
+                </p>
 
-                <div className="flex justify-between text-sm text-gray-400 mb-4">
+                <div className="flex justify-between text-sm text-gray-400 mb-4 flex-shrink-0">
                   <p>Stock: <span className="text-yellow-400">{product.stock}</span></p>
                   {product.rating && (
                     <p className="flex items-center gap-1">
@@ -413,19 +411,20 @@ export default function ProductList({
                 </div>
 
                 {quantityInCart > 0 && (
-                  <div className="mb-3 text-sm text-green-400 flex items-center gap-1">
+                  <div className="mb-3 text-sm text-green-400 flex items-center gap-1 flex-shrink-0">
                     <CheckCircle2 size={14} />
                     In Cart: {quantityInCart}
                   </div>
                 )}
 
-                <div className="flex gap-2 mt-auto">
+                {/* Buttons - ALWAYS AT BOTTOM */}
+                <div className="flex gap-2 mt-auto pt-3 flex-shrink-0">
                   <Link
                     href={`/dashboard/product/${product.id}`}
                     className="flex items-center justify-center gap-2 py-2 px-4 flex-1 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-sm font-semibold transition-all duration-300"
                   >
                     <Eye size={16} />
-                    View Details
+                    View
                   </Link>
                   
                   <button
@@ -440,14 +439,17 @@ export default function ProductList({
                     {outOfStock ? (
                       <>
                         <AlertCircle size={16} />
+                        Stock
                       </>
                     ) : addingId === product.id ? (
                       <>
                         <Loader2 className="animate-spin" size={16} />
+                        Adding
                       </>
                     ) : (
                       <>
                         <ShoppingCart size={16} />
+                        Add
                       </>
                     )}
                   </button>

@@ -23,13 +23,25 @@ export default function CartClient({ cartData, userId }) {
     0
   );
 
-  // Update cart count IMMEDIATELY when component loads
+  // Update cart count in localStorage and context
+  const updateCartCounts = (count) => {
+    // Update context
+    updateCartCount(count);
+    
+    // Update localStorage
+    localStorage.setItem('cartCount', count.toString());
+    
+    // Dispatch event for other components
+    window.dispatchEvent(new CustomEvent('cartUpdate', { detail: { count } }));
+  };
+
+  // Update cart count IMMEDIATELY when component loads or changes
   useEffect(() => {
-    updateCartCount(totalItemsCount);
-  }, [totalItemsCount, updateCartCount]);
+    updateCartCounts(totalItemsCount);
+  }, [totalItemsCount]);
 
   // Handle quantity update
-  const handleQuantityChange = (productId, newQty) => {
+  const handleQuantityChange = async (productId, newQty) => {
     setCart((prevCart) => {
       const updatedCart = {
         ...prevCart,
@@ -42,7 +54,7 @@ export default function CartClient({ cartData, userId }) {
       
       // Update cart count immediately
       const newTotal = updatedCart.items.reduce((acc, item) => acc + item.quantity, 0);
-      updateCartCount(newTotal);
+      updateCartCounts(newTotal);
       
       return updatedCart;
     });
@@ -76,7 +88,7 @@ export default function CartClient({ cartData, userId }) {
           
           // Update cart count immediately
           const newTotal = updatedCart.items.reduce((acc, item) => acc + item.quantity, 0);
-          updateCartCount(newTotal);
+          updateCartCounts(newTotal);
           
           return updatedCart;
         });
@@ -115,20 +127,20 @@ export default function CartClient({ cartData, userId }) {
 
   if (!cart.items || cart.items.length === 0) {
     return (
-      <div className="min-h-screen bg-black text-white py-20 px-6">
+      <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-neutral-900 border border-gray-800 rounded-3xl p-12">
-            <ShoppingBag className="w-24 h-24 text-gray-600 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-300 mb-4">Your Cart is Empty</h2>
-            <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto">
+          <div className="bg-neutral-900 border border-gray-800 rounded-3xl p-8 sm:p-12">
+            <ShoppingBag className="w-16 h-16 sm:w-24 sm:h-24 text-gray-600 mx-auto mb-4 sm:mb-6" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-300 mb-3 sm:mb-4">Your Cart is Empty</h2>
+            <p className="text-gray-400 text-base sm:text-lg mb-6 sm:mb-8 max-w-md mx-auto px-4">
               Looks like you haven't added any items to your cart yet. Start shopping to discover amazing products!
             </p>
             <button
               onClick={continueShopping}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3 mx-auto"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 sm:px-8 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 sm:gap-3 mx-auto text-sm sm:text-base"
             >
               Continue Shopping
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>
@@ -137,21 +149,21 @@ export default function CartClient({ cartData, userId }) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-black text-white py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold mb-4 text-blue-400">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-3 sm:mb-4 text-blue-400">
             Your Shopping Cart
           </h1>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-400 text-base sm:text-lg">
             {cart.items.length} {cart.items.length === 1 ? 'item' : 'items'} in your cart
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {cart.items.map((item) => {
               const stock = item.stock ?? 0;
               const isOutOfStock = item.quantity >= stock;
@@ -161,47 +173,49 @@ export default function CartClient({ cartData, userId }) {
               return (
                 <div
                   key={item.productId}
-                  className="flex flex-col sm:flex-row items-center justify-between bg-neutral-900 border border-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
+                  className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between bg-neutral-900 border border-gray-800 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
                 >
                   {/* Product Info */}
-                  <div className="flex items-center gap-4 flex-1 mb-4 sm:mb-0">
+                  <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 mb-4 sm:mb-0">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-contain bg-white flex-shrink-0"
+                      className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl object-contain bg-white flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">
-                      <h2 className="text-lg font-semibold text-white truncate">{item.name}</h2>
-                      <p className="text-gray-400 text-sm capitalize">{item.category}</p>
-                      <p className="text-blue-400 font-semibold mt-2">
+                      <h2 className="text-base sm:text-lg font-semibold text-white truncate mb-1">{item.name}</h2>
+                      <p className="text-gray-400 text-xs sm:text-sm capitalize mb-2">{item.category}</p>
+                      <p className="text-blue-400 font-semibold text-sm sm:text-base">
                         ${item.price} × {item.quantity} ={" "}
                         <span className="text-green-400">${totalPrice}</span>
                       </p>
                       {isOutOfStock && (
-                        <p className="text-red-400 text-sm mt-1">Out of stock</p>
+                        <p className="text-red-400 text-xs sm:text-sm mt-1">Out of stock</p>
                       )}
                     </div>
                   </div>
 
                   {/* Controls */}
-                  <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-                    <QuantityControls
-                      item={{ ...item, quantity: displayQty, stock }}
-                      userId={userId}
-                      onQuantityChange={handleQuantityChange}
-                    />
+                  <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                    <div className="flex-1 sm:flex-none">
+                      <QuantityControls
+                        item={{ ...item, quantity: displayQty, stock }}
+                        userId={userId}
+                        onQuantityChange={handleQuantityChange}
+                      />
+                    </div>
                     
                     {/* Delete Button */}
                     <button
                       onClick={() => handleRemoveItem(item.productId)}
                       disabled={isRemoving === item.productId}
-                      className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                       title="Remove item"
                     >
                       {isRemoving === item.productId ? (
-                        <div className="w-5 h-5 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
                       ) : (
-                        <Trash2 className="w-5 h-5" />
+                        <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                       )}
                     </button>
                   </div>
@@ -210,42 +224,42 @@ export default function CartClient({ cartData, userId }) {
             })}
           </div>
 
-          {/* Cart Summary */}
-          <div className="bg-neutral-900 border border-gray-800 rounded-2xl p-6 shadow-xl sticky top-24 self-start">
-            <h2 className="text-2xl font-semibold mb-6 text-white">Order Summary</h2>
+          {/* Cart Summary - Sticky on desktop */}
+          <div className="bg-neutral-900 border border-gray-800 rounded-2xl p-4 sm:p-6 shadow-xl lg:sticky lg:top-24 self-start">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-white">Order Summary</h2>
             
-            <div className="space-y-3 mb-6">
-              <div className="flex justify-between text-gray-300">
+            <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+              <div className="flex justify-between text-sm sm:text-base text-gray-300">
                 <span>Subtotal ({totalItemsCount} items)</span>
                 <span className="text-white font-medium">${subtotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-gray-300">
+              <div className="flex justify-between text-sm sm:text-base text-gray-300">
                 <span>Shipping</span>
                 <span className="text-green-400">Free</span>
               </div>
-              <div className="flex justify-between text-gray-300">
+              <div className="flex justify-between text-sm sm:text-base text-gray-300">
                 <span>Tax</span>
-                <span className="text-gray-400">Calculated at checkout</span>
+                <span className="text-gray-400 text-xs sm:text-sm">Calculated at checkout</span>
               </div>
             </div>
 
-            <hr className="border-gray-700 my-4" />
+            <hr className="border-gray-700 my-3 sm:my-4" />
 
-            <div className="flex justify-between text-xl font-bold text-blue-400 mb-6">
+            <div className="flex justify-between text-lg sm:text-xl font-bold text-blue-400 mb-4 sm:mb-6">
               <span>Total</span>
               <span>${subtotal.toFixed(2)}</span>
             </div>
 
             <button 
               onClick={handleCheckout}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg mb-4"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 sm:py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg mb-3 sm:mb-4 text-sm sm:text-base"
             >
               Proceed to Checkout
             </button>
 
             <button
               onClick={continueShopping}
-              className="w-full border border-gray-600 hover:border-gray-500 text-gray-300 hover:text-white font-semibold py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+              className="w-full border border-gray-600 hover:border-gray-500 text-gray-300 hover:text-white font-semibold py-2 sm:py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               Continue Shopping
             </button>

@@ -88,36 +88,63 @@ export async function PATCH(req) {
   try {
     const { userId, productId, quantity } = await req.json();
 
-    if (!userId)
-      return new Response(JSON.stringify({ error: "Not authenticated" }), { status: 401 });
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "Not authenticated" }), { 
+        status: 401 
+      });
+    }
 
     await connectDB();
-        JSON.stringify({ error: "Not authenticated" }),
-        { status: 401 }
 
-      return new Response(JSON.stringify({ error: "Cart not found" }), { status: 404 });
+    // FIXED: Add the missing cart query
+    const cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      return new Response(JSON.stringify({ error: "Cart not found" }), { 
+        status: 404 
+      });
+    }
 
     const item = cart.items.find((i) => String(i.productId) === String(productId));
-    if (!item)
-      return new Response(JSON.stringify({ error: "Item not found" }), { status: 404 });
+    
+    if (!item) {
+      return new Response(JSON.stringify({ error: "Item not found" }), { 
+        status: 404 
+      });
+    }
+
     // Prevent exceeding stock
     if (quantity > item.stock) {
       return new Response(
-        JSON.stringify({ error: "Out of stock", available: item.stock }),
+        JSON.stringify({ 
+          error: "Out of stock", 
+          available: item.stock 
+        }),
         { status: 400 }
       );
     }
 
+    // Update quantity
     item.quantity = quantity;
     await cart.save();
 
     return new Response(
-      JSON.stringify({ success: true, message: "Quantity updated", cart }),
-      { status: 200 }
+      JSON.stringify({ 
+        success: true, 
+        message: "Quantity updated", 
+        cart 
+      }),
+      { 
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      }
     );
   } catch (error) {
     console.error("Cart PATCH Error:", error);
-    return new Response(JSON.stringify({ error: "Server error" }), { status: 500 });
+    return new Response(
+      JSON.stringify({ error: "Server error" }), 
+      { status: 500 }
+    );
   }
 }
 

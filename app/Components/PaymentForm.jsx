@@ -130,7 +130,7 @@ export default function PaymentForm({ cart, subtotal }) {
         sessionStorage.removeItem('checkoutCart');
         
         // Redirect to success page
-        router.push(`/checkout/success?orderId=${paymentResult.orderId}&amount=${exactSubtotal}`);
+        router.push(`/`);
       } else {
         throw new Error(paymentResult.error || "Payment failed");
       }
@@ -211,13 +211,14 @@ export default function PaymentForm({ cart, subtotal }) {
                       id="cardNumber"
                       name="cardNumber"
                       value={formData.cardNumber}
-                      onChange={(e) => {
-                        const formatted = formatCardNumber(e.target.value);
-                        handleInputChange({
-                          ...e,
-                          target: { ...e.target, value: formatted }
-                        });
-                      }}
+                  onChange={(e) => {
+  const formatted = formatCardNumber(e.target.value);
+  setFormData(prev => ({ ...prev, cardNumber: formatted }));
+  
+  if (errors.cardNumber) {
+    setErrors(prev => ({ ...prev, cardNumber: "" }));
+  }
+}}
                       maxLength={19}
                       className={`w-full px-4 py-3 bg-neutral-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                         errors.cardNumber ? "border-red-500" : "border-gray-700"
@@ -258,13 +259,14 @@ export default function PaymentForm({ cart, subtotal }) {
                       id="expiryDate"
                       name="expiryDate"
                       value={formData.expiryDate}
-                      onChange={(e) => {
-                        const formatted = formatExpiryDate(e.target.value);
-                        handleInputChange({
-                          ...e,
-                          target: { ...e.target, value: formatted }
-                        });
-                      }}
+                    onChange={(e) => {
+  const formatted = formatCardNumber(e.target.value);
+  setFormData(prev => ({ ...prev, cardNumber: formatted }));
+  
+  if (errors.cardNumber) {
+    setErrors(prev => ({ ...prev, cardNumber: "" }));
+  }
+}}
                       maxLength={5}
                       className={`w-full px-4 py-3 bg-neutral-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                         errors.expiryDate ? "border-red-500" : "border-gray-700"

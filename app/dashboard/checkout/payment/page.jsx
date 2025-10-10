@@ -3,10 +3,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CreditCard, Lock, Shield, AlertCircle } from "lucide-react";
+import { CreditCard, Lock, Shield, AlertCircle, CheckCircle } from "lucide-react";
 
 export default function PaymentForm() {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [formData, setFormData] = useState({
     email: "",
     cardNumber: "",
@@ -67,18 +69,68 @@ export default function PaymentForm() {
     0
   ) || 0;
 
+  // SIMPLIFIED input change handler - no formatting during input
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+    
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
     
+    // Clear error for this field if it exists
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
         [name]: ""
       }));
+    }
+  };
+
+  // Format card number only for display, not during input
+  const formatCardNumber = (value) => {
+    const cleaned = value.replace(/\s/g, "").replace(/\D/g, "");
+    const matches = cleaned.match(/\d{1,16}/g);
+    const grouped = matches ? matches.join(" ").substring(0, 19) : "";
+    return grouped;
+  };
+
+  // Format expiry date only for display, not during input
+  const formatExpiryDate = (value) => {
+    const cleaned = value.replace(/\D/g, "");
+    if (cleaned.length >= 3) {
+      return `${cleaned.substring(0, 2)}/${cleaned.substring(2, 4)}`;
+    }
+    return cleaned;
+  };
+
+  // Handle card number input with proper formatting
+  const handleCardNumberChange = (e) => {
+    const rawValue = e.target.value.replace(/\s/g, "").replace(/\D/g, "");
+    const formattedValue = formatCardNumber(rawValue);
+    
+    setFormData(prev => ({
+      ...prev,
+      cardNumber: formattedValue
+    }));
+    
+    if (errors.cardNumber) {
+      setErrors(prev => ({ ...prev, cardNumber: "" }));
+    }
+  };
+
+  // Handle expiry date input with proper formatting
+  const handleExpiryDateChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, "");
+    const formattedValue = formatExpiryDate(rawValue);
+    
+    setFormData(prev => ({
+      ...prev,
+      expiryDate: formattedValue
+    }));
+    
+    if (errors.expiryDate) {
+      setErrors(prev => ({ ...prev, expiryDate: "" }));
     }
   };
 
@@ -91,9 +143,11 @@ export default function PaymentForm() {
       newErrors.email = "Email is invalid";
     }
 
-    if (!formData.cardNumber) {
+    // Remove spaces for card number validation
+    const rawCardNumber = formData.cardNumber.replace(/\s/g, "");
+    if (!rawCardNumber) {
       newErrors.cardNumber = "Card number is required";
-    } else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, ""))) {
+    } else if (!/^\d{16}$/.test(rawCardNumber)) {
       newErrors.cardNumber = "Card number must be 16 digits";
     }
 
@@ -129,6 +183,35 @@ export default function PaymentForm() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Demo payment processing with progress animation
+  const processDemoPayment = () => {
+    setIsProcessing(true);
+    setProgress(0);
+    
+    // Simulate payment processing with progress updates
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        const newProgress = prev + 20;
+        if (newProgress >= 100) {
+          clearInterval(interval);
+          // Show success state after 5 seconds
+          setTimeout(() => {
+            setIsSuccess(true);
+            // Redirect to success page after 2 seconds of showing success state
+            setTimeout(() => {
+              // Clear storage after successful payment
+              sessionStorage.removeItem('checkoutCart');
+              localStorage.removeItem('checkoutCart_backup');
+              router.push(`/checkout/success?orderId=DEMO-${Date.now()}&amount=${exactSubtotal}`);
+            }, 2000);
+          }, 500);
+          return 100;
+        }
+        return newProgress;
+      });
+    }, 1000); // Update every second for 5 seconds total
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -136,9 +219,17 @@ export default function PaymentForm() {
       return;
     }
 
+    // Use demo payment processing instead of real API call
+    processDemoPayment();
+    
+    // Original API call (commented out for demo)
+    /*
     setIsProcessing(true);
 
     try {
+      // Remove spaces from card number before sending to server
+      const rawCardNumber = formData.cardNumber.replace(/\s/g, "");
+      
       const paymentResponse = await fetch("/api/payment/process", {
         method: "POST",
         headers: {
@@ -148,7 +239,7 @@ export default function PaymentForm() {
           cartItems: cartData?.items || [],
           totalAmount: exactSubtotal,
           paymentMethod: {
-            cardNumber: formData.cardNumber,
+            cardNumber: rawCardNumber,
             expiryDate: formData.expiryDate,
             cvv: formData.cvv,
             nameOnCard: formData.nameOnCard
@@ -182,14 +273,7 @@ export default function PaymentForm() {
     } finally {
       setIsProcessing(false);
     }
-  };
-
-  const formatCardNumber = (value) => {
-    return value.replace(/\s/g, "").replace(/(\d{4})/g, "$1 ").trim();
-  };
-
-  const formatExpiryDate = (value) => {
-    return value.replace(/\D/g, "").replace(/(\d{2})(\d)/, "$1/$2");
+    */
   };
 
   // Show loading state while cart data is being loaded
@@ -287,13 +371,7 @@ export default function PaymentForm() {
                       id="cardNumber"
                       name="cardNumber"
                       value={formData.cardNumber}
-                      onChange={(e) => {
-                        const formatted = formatCardNumber(e.target.value);
-                        handleInputChange({
-                          ...e,
-                          target: { ...e.target, value: formatted }
-                        });
-                      }}
+                      onChange={handleCardNumberChange}
                       maxLength={19}
                       className={`w-full px-4 py-3 bg-neutral-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                         errors.cardNumber ? "border-red-500" : "border-gray-700"
@@ -334,13 +412,7 @@ export default function PaymentForm() {
                       id="expiryDate"
                       name="expiryDate"
                       value={formData.expiryDate}
-                      onChange={(e) => {
-                        const formatted = formatExpiryDate(e.target.value);
-                        handleInputChange({
-                          ...e,
-                          target: { ...e.target, value: formatted }
-                        });
-                      }}
+                      onChange={handleExpiryDateChange}
                       maxLength={5}
                       className={`w-full px-4 py-3 bg-neutral-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                         errors.expiryDate ? "border-red-500" : "border-gray-700"
@@ -495,18 +567,49 @@ export default function PaymentForm() {
                 </div>
               </div>
 
-              {/* Submit Button */}
+              {/* Submit Button with Demo Processing */}
               <div className="bg-neutral-900 border border-gray-800 rounded-2xl p-6">
+                {isProcessing && !isSuccess && (
+                  <div className="mb-4">
+                    <div className="flex justify-between text-sm text-gray-300 mb-2">
+                      <span>Processing payment...</span>
+                      <span>{progress}%</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="bg-blue-500 h-2 rounded-full transition-all duration-300 ease-out"
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2 text-center">
+                      Please wait while we process your payment. Do not refresh the page.
+                    </p>
+                  </div>
+                )}
+
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                  className={`w-full font-semibold py-4 rounded-xl transition-all duration-300 transform shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 ${
+                    isSuccess 
+                      ? "bg-green-600 hover:bg-green-700 text-white" 
+                      : isProcessing 
+                      ? "bg-blue-600 text-white" 
+                      : "bg-blue-600 hover:bg-blue-700 text-white hover:scale-105"
+                  }`}
                 >
                   {isProcessing ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Processing...
-                    </>
+                    isSuccess ? (
+                      <>
+                        <CheckCircle className="w-5 h-5" />
+                        Payment Successful!
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Processing... ({progress}%)
+                      </>
+                    )
                   ) : (
                     <>
                       <Lock className="w-5 h-5" />
@@ -519,15 +622,17 @@ export default function PaymentForm() {
                   <p className="text-red-400 text-center mt-4">{errors.submit}</p>
                 )}
 
-                <p className="text-gray-400 text-xs text-center mt-4">
-                  By completing your purchase, you agree to our Terms of Service and Privacy Policy.
-                  Your payment is secure and encrypted.
-                </p>
+                {!isProcessing && (
+                  <p className="text-gray-400 text-xs text-center mt-4">
+                    By completing your purchase, you agree to our Terms of Service and Privacy Policy.
+                    Your payment is secure and encrypted.
+                  </p>
+                )}
               </div>
             </form>
           </div>
 
-          {/* Order Summary - Shows EXACT same prices as cart */}
+          {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-neutral-900 border border-gray-800 rounded-2xl p-6 sticky top-24">
               <h2 className="text-xl font-semibold mb-4 text-white">Order Summary</h2>
@@ -575,6 +680,13 @@ export default function PaymentForm() {
               <div className="flex justify-between text-lg font-bold text-blue-400">
                 <span>Total</span>
                 <span>${exactSubtotal.toFixed(2)}</span>
+              </div>
+
+              {/* Demo Notice */}
+              <div className="mt-6 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                <p className="text-yellow-400 text-xs text-center">
+                  💳 Demo Mode: This is a simulation. No real payment will be processed.
+                </p>
               </div>
             </div>
           </div>

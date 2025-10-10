@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, ShoppingCart, Loader2 } from "lucide-react";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function ProductDetailPage({ params }) {
   const productId = parseInt(params.id);
@@ -67,7 +67,13 @@ export default function ProductDetailPage({ params }) {
     setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
   };
 
-  // Add to Cart Functionality
+  // Cart count update function
+  const updateCartCount = (count) => {
+    localStorage.setItem('cartCount', count.toString());
+    window.dispatchEvent(new CustomEvent('cartUpdate', { detail: { count } }));
+  };
+
+  // Add to Cart Functionality - FIXED
   const handleAddToCart = async () => {
     if (!isAuthenticated || !user) {
       toast.error("Please log in to add products to your cart.");
@@ -97,6 +103,12 @@ export default function ProductDetailPage({ params }) {
 
       if (res.ok) {
         toast.success(data.message || "Item added to your cart!");
+        
+        // UPDATE CART COUNT - This was missing
+        const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
+        const newCount = currentCount + 1;
+        updateCartCount(newCount);
+        
       } else if (data.error === "Out of stock") {
         toast.error("Item is out of stock!");
       } else {
@@ -112,6 +124,9 @@ export default function ProductDetailPage({ params }) {
 
   return (
     <section className="py-8 bg-black text-white min-h-screen">
+      {/* ADD TOASTER COMPONENT - This was missing */}
+      <Toaster position="top-center" reverseOrder={false} />
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Breadcrumb */}
         <nav className="mb-6">
@@ -319,7 +334,7 @@ export default function ProductDetailPage({ params }) {
                 )}
               </button>
               <Link
-                href="/dashboard/products"
+                href="/dashboard/product"
                 className="bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-center"
               >
                 Back to Products
@@ -336,7 +351,7 @@ export default function ProductDetailPage({ params }) {
                 Related Products
               </h2>
               <Link 
-                href="/dashboard/products" 
+                href="/dashboard/product" 
                 className="text-gray-400 hover:text-blue-400 transition-colors duration-300 text-sm"
               >
                 View All →
