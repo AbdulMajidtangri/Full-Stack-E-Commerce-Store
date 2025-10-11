@@ -4,8 +4,10 @@ import { useSearchParams } from 'next/navigation';
 import { productsData } from '../../Data/productsData/productsData';
 import Link from 'next/link';
 import { Search, ArrowLeft, Star } from 'lucide-react';
+import { Suspense } from 'react';
 
-export default function SearchPage() {
+// Main search component
+function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
 
@@ -30,7 +32,7 @@ export default function SearchPage() {
           </Link>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-gray-900">
-              Search Results for "{query}"
+              Search Results for &quot;{query}&quot;
             </h1>
             <p className="text-gray-600 mt-1">
               Found {searchResults.length} product{searchResults.length !== 1 ? 's' : ''}
@@ -44,7 +46,7 @@ export default function SearchPage() {
             {searchResults.map((product) => (
               <Link
                 key={product.id}
-                href={`/dashboard/product/${product.id}`}  // Corrected link
+                href={`/dashboard/product/${product.id}`}
                 className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 group border border-gray-200"
               >
                 <div className="aspect-w-16 aspect-h-12 overflow-hidden rounded-t-lg">
@@ -95,7 +97,7 @@ export default function SearchPage() {
               No products found
             </h2>
             <p className="text-gray-600 mb-6">
-              We couldn't find any products matching "{query}"
+              We couldn&apos;t find any products matching &quot;{query}&quot;
             </p>
             <div className="space-y-2 text-sm text-gray-500 max-w-md mx-auto">
               <p>• Try searching with different keywords</p>
@@ -113,5 +115,43 @@ export default function SearchPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Loading component
+function SearchLoading() {
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="animate-pulse">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-24 h-6 bg-gray-300 rounded"></div>
+            <div className="flex-1">
+              <div className="h-8 bg-gray-300 rounded w-1/3 mb-2"></div>
+              <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="bg-white rounded-lg shadow-md p-4">
+                <div className="w-full h-48 bg-gray-300 rounded-t-lg mb-4"></div>
+                <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                <div className="h-3 bg-gray-300 rounded w-2/3 mb-2"></div>
+                <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Main export with Suspense boundary
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<SearchLoading />}>
+      <SearchContent />
+    </Suspense>
   );
 }
