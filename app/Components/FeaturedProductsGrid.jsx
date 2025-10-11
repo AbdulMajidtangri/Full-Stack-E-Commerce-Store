@@ -52,7 +52,6 @@ export default function FeaturedProductsGrid({ products, initialCart, user }) {
         toast.success(data.message || "Item added to your cart!");
         setCart(data.cart);
         
-        // Update cart count
         const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
         const newCount = currentCount + 1;
         updateCartCount(newCount);
@@ -71,7 +70,7 @@ export default function FeaturedProductsGrid({ products, initialCart, user }) {
 
   if (!products || products.length === 0) {
     return (
-      <div className="text-center text-gray-400 py-20">
+      <div className="text-center text-gray-500 py-20">
         No featured products available.
       </div>
     );
@@ -89,11 +88,11 @@ export default function FeaturedProductsGrid({ products, initialCart, user }) {
           return (
             <div
               key={product.id}
-              className="min-w-[280px] max-w-[320px] bg-neutral-900 border border-gray-800 rounded-2xl shadow-md hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300 flex flex-col h-[480px] flex-shrink-0"
+              className="min-w-[280px] max-w-[320px] bg-white border border-gray-300 rounded-2xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300 flex flex-col h-[480px] flex-shrink-0"
             >
               {/* Product Image */}
               <Link href={`/dashboard/product/${product.id}`} className="block flex-shrink-0">
-                <div className="relative overflow-hidden rounded-t-2xl bg-white flex justify-center items-center h-48">
+                <div className="relative overflow-hidden rounded-t-2xl bg-gray-100 flex justify-center items-center h-48">
                   <Image
                     src={product.thumbnail || product.image}
                     alt={product.title}
@@ -104,7 +103,7 @@ export default function FeaturedProductsGrid({ products, initialCart, user }) {
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R"
                   />
                   <div className="absolute top-2 left-2">
-                    <span className="bg-yellow-500 text-black text-xs px-2 py-1 rounded-full font-semibold">
+                    <span className="bg-black text-white text-xs px-2 py-1 rounded-full font-semibold">
                       Featured
                     </span>
                   </div>
@@ -114,34 +113,34 @@ export default function FeaturedProductsGrid({ products, initialCart, user }) {
               {/* Product Info */}
               <div className="p-4 flex flex-col flex-1">
                 <Link href={`/dashboard/product/${product.id}`}>
-                  <h3 className="font-semibold text-lg mb-1 text-white truncate hover:text-blue-400 transition-colors">
+                  <h3 className="font-semibold text-lg mb-1 text-black truncate hover:text-gray-700 transition-colors">
                     {product.title}
                   </h3>
                 </Link>
                 
-                <p className="text-gray-400 text-sm mb-3 line-clamp-2 flex-1 min-h-[40px]">
+                <p className="text-gray-600 text-sm mb-3 line-clamp-2 flex-1 min-h-[40px]">
                   {product.description}
                 </p>
 
                 <div className="flex items-center justify-between mb-3 flex-shrink-0">
-                  <p className="text-sm text-blue-400">
-                    Stock: <span className="text-gray-200">{product.stock}</span>
+                  <p className="text-sm text-gray-700">
+                    Stock: <span className="text-black font-medium">{product.stock}</span>
                   </p>
                   {product.rating && (
-                    <p className="text-sm text-yellow-400 flex items-center gap-1">
+                    <p className="text-sm text-gray-700 flex items-center gap-1">
                       ⭐ {product.rating}
                     </p>
                   )}
                 </div>
 
                 {quantityInCart > 0 && (
-                  <div className="mb-2 text-sm text-green-400 flex items-center gap-1 flex-shrink-0">
+                  <div className="mb-2 text-sm text-green-600 flex items-center gap-1 flex-shrink-0">
                     <CheckCircle2 size={14} />
                     In Cart: {quantityInCart}
                   </div>
                 )}
 
-                <p className="text-lg font-bold text-white mb-4 flex-shrink-0">
+                <p className="text-lg font-bold text-black mb-4 flex-shrink-0">
                   ${product.price.toFixed(2)}
                 </p>
 
@@ -149,7 +148,7 @@ export default function FeaturedProductsGrid({ products, initialCart, user }) {
                 <div className="flex gap-2 mt-auto pt-2 flex-shrink-0">
                   <Link
                     href={`/dashboard/product/${product.id}`}
-                    className="flex items-center justify-center gap-2 py-2 px-4 flex-1 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-sm font-semibold transition-all duration-300"
+                    className="flex items-center justify-center gap-2 py-2 px-4 flex-1 bg-gray-100 hover:bg-gray-200 text-black rounded-xl text-sm font-semibold transition-all duration-300 border border-gray-300"
                   >
                     <Eye size={16} />
                     View
@@ -158,10 +157,10 @@ export default function FeaturedProductsGrid({ products, initialCart, user }) {
                   <button
                     onClick={() => handleAddToCart(product)}
                     disabled={addingId === product.id || outOfStock}
-                    className={`flex items-center justify-center gap-2 py-2 px-4 flex-1 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                    className={`flex items-center justify-center gap-2 py-2 px-4 flex-1 rounded-xl text-sm font-semibold transition-all duration-300 border ${
                       outOfStock
-                        ? "bg-gray-700 cursor-not-allowed text-gray-400"
-                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                        ? "bg-gray-100 border-gray-300 cursor-not-allowed text-gray-400"
+                        : "bg-black hover:bg-gray-800 text-white border-black"
                     }`}
                   >
                     {outOfStock ? (

@@ -1,4 +1,4 @@
-// components/AllProductsSection.js (SERVER COMPONENT - remove "use client")
+// components/AllProductsSection.js (SERVER COMPONENT)
 import React from "react";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import productsData from "../Data/productsData/productsData";
@@ -8,17 +8,15 @@ export default async function AllProductsSection() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  // Filter products on SERVER (instant)
   const regularProducts = productsData.filter(
     product => product.category !== "launched" && product.category !== "featured"
   ).slice(0, 6);
 
-  // Fetch cart on SERVER if user exists
   let cart = null;
   if (user) {
     try {
       const res = await fetch(`${process.env.NEXTAUTH_URL}/api/cart?userId=${user.id}`, {
-        next: { revalidate: 0 } // Always fresh data
+        next: { revalidate: 0 }
       });
       
       if (res.ok) {
@@ -31,9 +29,9 @@ export default async function AllProductsSection() {
   }
 
   return (
-    <section className="py-20 bg-black text-white">
+    <section className="py-20 bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-3xl font-bold text-center mb-12 text-blue-400">
+        <h2 className="text-3xl font-bold text-center mb-12 text-black">
           Our Latest Products
         </h2>
         

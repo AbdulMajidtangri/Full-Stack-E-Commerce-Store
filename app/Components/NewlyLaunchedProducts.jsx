@@ -8,10 +8,8 @@ export default async function NewlyLaunchedProducts() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  // Load newly launched products on SERVER
   const newlyLaunched = getNewlyLaunchedProducts();
 
-  // Fetch cart on SERVER if user exists
   let cart = null;
   if (user) {
     try {
@@ -29,9 +27,9 @@ export default async function NewlyLaunchedProducts() {
   }
 
   return (
-    <section className="py-16 bg-black text-white">
+    <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-3xl font-bold mb-8 text-center text-blue-400">
+        <h2 className="text-3xl font-bold mb-8 text-center text-black">
           Newly Launched
         </h2>
         

@@ -70,7 +70,7 @@ export default function AllProductsGrid({ products, initialCart, user }) {
 
   if (!products || products.length === 0) {
     return (
-      <p className="text-center text-gray-400 py-12">
+      <p className="text-center text-gray-500 py-12">
         No products available.
       </p>
     );
@@ -80,7 +80,6 @@ export default function AllProductsGrid({ products, initialCart, user }) {
     <>
       <Toaster position="top-center" reverseOrder={false} />
       
-      {/* Product Grid with consistent card sizing */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => {
           const quantityInCart = getQuantityInCart(product.id);
@@ -89,16 +88,16 @@ export default function AllProductsGrid({ products, initialCart, user }) {
           return (
             <div
               key={product.id}
-              className="group relative bg-neutral-900 border border-gray-800 rounded-2xl shadow-lg hover:shadow-blue-500/20 hover:scale-105 transition-all duration-300 overflow-hidden flex flex-col h-full min-h-[480px]"
+              className="group relative bg-white border border-gray-300 rounded-2xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300 overflow-hidden flex flex-col h-full min-h-[480px]"
             >
               {/* Category Badge */}
               <div className="absolute top-2 left-2 z-10">
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold border ${
                   product.category === "launched" 
-                    ? "bg-green-500/20 text-green-400" 
+                    ? "bg-green-50 text-green-700 border-green-200" 
                     : product.category === "featured"
-                    ? "bg-yellow-500/20 text-yellow-400"
-                    : "bg-blue-500/20 text-blue-400"
+                    ? "bg-yellow-50 text-yellow-700 border-yellow-200"
+                    : "bg-gray-100 text-gray-700 border-gray-300"
                 }`}>
                   {product.category === "launched" ? "New" : 
                    product.category === "featured" ? "Featured" : 
@@ -106,9 +105,9 @@ export default function AllProductsGrid({ products, initialCart, user }) {
                 </span>
               </div>
 
-              {/* Product Image - Fixed height */}
+              {/* Product Image */}
               <Link href={`/dashboard/product/${product.id}`} className="block flex-shrink-0">
-                <div className="overflow-hidden bg-white flex justify-center items-center h-48">
+                <div className="overflow-hidden bg-gray-100 flex justify-center items-center h-48">
                   <Image
                     src={product.thumbnail}
                     alt={product.title}
@@ -121,21 +120,21 @@ export default function AllProductsGrid({ products, initialCart, user }) {
                 </div>
               </Link>
 
-              {/* Product Info - Flexible content area */}
+              {/* Product Info */}
               <div className="p-5 flex flex-col flex-1">
                 <Link href={`/dashboard/product/${product.id}`} className="block mb-1 flex-shrink-0">
-                  <h2 className="font-bold text-lg text-white truncate hover:text-blue-400 transition-colors">
+                  <h2 className="font-bold text-lg text-black truncate hover:text-gray-700 transition-colors">
                     {product.title}
                   </h2>
                 </Link>
                 
-                <p className="text-gray-400 text-sm mb-2 capitalize flex-shrink-0">{product.category}</p>
-                <p className="text-xl font-bold text-blue-400 mb-3 flex-shrink-0">
+                <p className="text-gray-600 text-sm mb-2 capitalize flex-shrink-0">{product.category}</p>
+                <p className="text-xl font-bold text-black mb-3 flex-shrink-0">
                   ${typeof product.price === 'number' ? product.price.toFixed(2) : product.price}
                 </p>
 
-                <div className="flex justify-between text-sm text-gray-400 mb-4 flex-shrink-0">
-                  <p>Stock: <span className="text-yellow-400">{product.stock}</span></p>
+                <div className="flex justify-between text-sm text-gray-600 mb-4 flex-shrink-0">
+                  <p>Stock: <span className="text-black font-medium">{product.stock}</span></p>
                   {product.rating && (
                     <p className="flex items-center gap-1">
                       ⭐ {product.rating}
@@ -144,17 +143,17 @@ export default function AllProductsGrid({ products, initialCart, user }) {
                 </div>
 
                 {quantityInCart > 0 && (
-                  <div className="mb-3 text-sm text-green-400 flex items-center gap-1 flex-shrink-0">
+                  <div className="mb-3 text-sm text-green-600 flex items-center gap-1 flex-shrink-0">
                     <CheckCircle2 size={14} />
                     In Cart: {quantityInCart}
                   </div>
                 )}
 
-                {/* Buttons - Always at bottom */}
+                {/* Buttons */}
                 <div className="flex gap-2 mt-auto pt-3 flex-shrink-0">
                   <Link
                     href={`/dashboard/product/${product.id}`}
-                    className="flex items-center justify-center gap-2 py-2 px-4 flex-1 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-sm font-semibold transition-all duration-300"
+                    className="flex items-center justify-center gap-2 py-2 px-4 flex-1 bg-gray-100 hover:bg-gray-200 text-black rounded-xl text-sm font-semibold transition-all duration-300 border border-gray-300"
                   >
                     <Eye size={16} />
                     View
@@ -163,10 +162,10 @@ export default function AllProductsGrid({ products, initialCart, user }) {
                   <button
                     onClick={() => handleAddToCart(product)}
                     disabled={addingId === product.id || outOfStock}
-                    className={`flex items-center justify-center gap-2 py-2 px-4 flex-1 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                    className={`flex items-center justify-center gap-2 py-2 px-4 flex-1 rounded-xl text-sm font-semibold transition-all duration-300 border ${
                       outOfStock
-                        ? "bg-gray-700 cursor-not-allowed text-gray-400"
-                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                        ? "bg-gray-100 border-gray-300 cursor-not-allowed text-gray-400"
+                        : "bg-black hover:bg-gray-800 text-white border-black"
                     }`}
                   >
                     {outOfStock ? (
@@ -197,7 +196,7 @@ export default function AllProductsGrid({ products, initialCart, user }) {
       <div className="flex justify-center mt-14">
         <Link
           href="/dashboard/product"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-10 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/30"
+          className="bg-black hover:bg-gray-800 text-white font-semibold py-3 px-10 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-black"
         >
           View All Products
         </Link>

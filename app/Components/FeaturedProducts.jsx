@@ -8,10 +8,8 @@ export default async function FeaturedProducts() {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  // Load featured products on SERVER
   const featuredProducts = getFeaturedProducts();
 
-  // Fetch cart on SERVER if user exists
   let cart = null;
   if (user) {
     try {
@@ -29,9 +27,9 @@ export default async function FeaturedProducts() {
   }
 
   return (
-    <section className="py-16 bg-black text-white">
+    <section className="py-16 bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-3xl font-bold mb-8 text-center text-blue-400">
+        <h2 className="text-3xl font-bold mb-8 text-center text-black">
           Featured Products
         </h2>
         

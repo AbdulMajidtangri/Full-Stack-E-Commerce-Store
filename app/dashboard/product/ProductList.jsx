@@ -252,12 +252,12 @@ export default function ProductList({
 
   if (!displayProducts || displayProducts.length === 0) {
     return (
-      <div className="text-center text-gray-300 py-20">
+      <div className="text-center text-gray-600 py-20">
         <p className="text-lg mb-4">No products found{selectedCategory !== "all" ? ` in ${selectedCategory} category` : ""}.</p>
         {selectedCategory !== "all" && (
           <button
             onClick={clearCategoryFilter}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-xl transition-all"
+            className="bg-black hover:bg-gray-800 text-white font-semibold py-2 px-6 rounded-lg transition-all"
           >
             Show All Products
           </button>
@@ -277,7 +277,7 @@ export default function ProductList({
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowCategoryFilter(!showCategoryFilter)}
-              className="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-300"
+              className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-black font-semibold py-2 px-4 rounded-lg transition-all duration-300 border border-gray-300"
             >
               <Filter size={18} />
               Categories
@@ -285,11 +285,11 @@ export default function ProductList({
             
             {/* Selected Category Badge */}
             {selectedCategory !== "all" && (
-              <div className="flex items-center gap-2 bg-blue-500/20 text-blue-400 px-3 py-2 rounded-full">
+              <div className="flex items-center gap-2 bg-gray-100 text-black px-3 py-2 rounded-full border border-gray-300">
                 <span className="text-sm font-semibold capitalize">{selectedCategory}</span>
                 <button
                   onClick={clearCategoryFilter}
-                  className="hover:text-blue-300 transition-colors"
+                  className="hover:text-gray-600 transition-colors"
                 >
                   <X size={16} />
                 </button>
@@ -298,7 +298,7 @@ export default function ProductList({
           </div>
 
           {/* Products Count */}
-          <div className="text-gray-400 text-sm">
+          <div className="text-gray-600 text-sm">
             Showing {indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, displayProducts.length)} of {displayProducts.length} products
             {selectedCategory !== "all" && ` in ${selectedCategory}`}
           </div>
@@ -306,12 +306,12 @@ export default function ProductList({
 
         {/* Category Dropdown */}
         {showCategoryFilter && (
-          <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 mb-4">
+          <div className="bg-white border border-gray-300 rounded-xl p-4 mb-4 shadow-sm">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-white font-semibold">Filter by Category</h3>
+              <h3 className="text-black font-semibold">Filter by Category</h3>
               <button
                 onClick={() => setShowCategoryFilter(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-600 hover:text-black transition-colors"
               >
                 <X size={20} />
               </button>
@@ -326,8 +326,8 @@ export default function ProductList({
                   }}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 capitalize ${
                     selectedCategory === cat
-                      ? 'bg-blue-600 text-white shadow-lg scale-105'
-                      : 'bg-zinc-800 hover:bg-zinc-700 text-gray-300 hover:text-white'
+                      ? 'bg-black text-white shadow-lg scale-105'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-black border border-gray-300'
                   }`}
                 >
                   {cat === "all" ? "All Products" : cat}
@@ -348,16 +348,16 @@ export default function ProductList({
           return (
             <div
               key={product.id}
-              className="group relative bg-neutral-900 border border-gray-800 rounded-2xl shadow-lg hover:shadow-blue-500/20 hover:scale-105 transition-all duration-300 overflow-hidden flex flex-col h-[480px]"
+              className="group relative bg-white border border-gray-300 rounded-xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300 overflow-hidden flex flex-col h-[480px]"
             >
               {/* Category Badge */}
               <div className="absolute top-2 left-2 z-10">
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold border ${
                   product.category === "launched" 
-                    ? "bg-green-500/20 text-green-400" 
+                    ? "bg-green-50 text-green-700 border-green-200" 
                     : product.category === "featured"
-                    ? "bg-yellow-500/20 text-yellow-400"
-                    : "bg-blue-500/20 text-blue-400"
+                    ? "bg-yellow-50 text-yellow-700 border-yellow-200"
+                    : "bg-gray-100 text-gray-700 border-gray-300"
                 }`}>
                   {product.category === "launched" ? "New" : 
                    product.category === "featured" ? "Featured" : 
@@ -367,7 +367,7 @@ export default function ProductList({
 
               {/* Product Image - FIXED HEIGHT */}
               <Link href={`/dashboard/product/${product.id}`} className="block flex-shrink-0">
-                <div className="overflow-hidden bg-white flex justify-center items-center h-48">
+                <div className="overflow-hidden bg-gray-100 flex justify-center items-center h-48 border-b border-gray-300">
                   {imageErrors[product.id] ? (
                     <div className="flex flex-col items-center justify-center w-full h-full bg-gray-200 text-gray-500">
                       <ImageIcon size={48} className="mb-2" />
@@ -391,18 +391,18 @@ export default function ProductList({
               {/* Product Info - FLEXIBLE CONTENT AREA */}
               <div className="p-4 flex flex-col flex-1">
                 <Link href={`/dashboard/product/${product.id}`} className="block mb-1 flex-shrink-0">
-                  <h2 className="font-bold text-lg text-white truncate hover:text-blue-400 transition-colors">
+                  <h2 className="font-bold text-lg text-black truncate hover:text-gray-700 transition-colors">
                     {product.title}
                   </h2>
                 </Link>
                 
-                <p className="text-gray-400 text-sm mb-2 capitalize flex-shrink-0">{product.category}</p>
-                <p className="text-xl font-bold text-blue-400 mb-3 flex-shrink-0">
+                <p className="text-gray-600 text-sm mb-2 capitalize flex-shrink-0">{product.category}</p>
+                <p className="text-xl font-bold text-black mb-3 flex-shrink-0">
                   ${typeof product.price === 'number' ? product.price.toFixed(2) : product.price}
                 </p>
 
-                <div className="flex justify-between text-sm text-gray-400 mb-4 flex-shrink-0">
-                  <p>Stock: <span className="text-yellow-400">{product.stock}</span></p>
+                <div className="flex justify-between text-sm text-gray-600 mb-4 flex-shrink-0">
+                  <p>Stock: <span className="text-black font-medium">{product.stock}</span></p>
                   {product.rating && (
                     <p className="flex items-center gap-1">
                       ⭐ {product.rating}
@@ -411,7 +411,7 @@ export default function ProductList({
                 </div>
 
                 {quantityInCart > 0 && (
-                  <div className="mb-3 text-sm text-green-400 flex items-center gap-1 flex-shrink-0">
+                  <div className="mb-3 text-sm text-green-600 flex items-center gap-1 flex-shrink-0">
                     <CheckCircle2 size={14} />
                     In Cart: {quantityInCart}
                   </div>
@@ -421,7 +421,7 @@ export default function ProductList({
                 <div className="flex gap-2 mt-auto pt-3 flex-shrink-0">
                   <Link
                     href={`/dashboard/product/${product.id}`}
-                    className="flex items-center justify-center gap-2 py-2 px-4 flex-1 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-sm font-semibold transition-all duration-300"
+                    className="flex items-center justify-center gap-2 py-2 px-4 flex-1 bg-gray-100 hover:bg-gray-200 text-black rounded-lg text-sm font-semibold transition-all duration-300 border border-gray-300"
                   >
                     <Eye size={16} />
                     View
@@ -430,10 +430,10 @@ export default function ProductList({
                   <button
                     onClick={() => handleAddToCart(product)}
                     disabled={addingId === product.id || outOfStock}
-                    className={`flex items-center justify-center gap-2 py-2 px-4 flex-1 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                    className={`flex items-center justify-center gap-2 py-2 px-4 flex-1 rounded-lg text-sm font-semibold transition-all duration-300 border ${
                       outOfStock
-                        ? "bg-gray-700 cursor-not-allowed text-gray-400"
-                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                        ? "bg-gray-100 border-gray-300 cursor-not-allowed text-gray-400"
+                        : "bg-black hover:bg-gray-800 text-white border-black"
                     }`}
                   >
                     {outOfStock ? (
@@ -462,8 +462,8 @@ export default function ProductList({
 
       {/* Professional Pagination */}
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-12 px-6 py-8 border-t border-gray-800">
-          <div className="text-gray-400 text-sm">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-12 px-6 py-8 border-t border-gray-300">
+          <div className="text-gray-600 text-sm">
             Page {currentPage} of {totalPages}
           </div>
           
@@ -472,10 +472,10 @@ export default function ProductList({
             <button
               onClick={goToPrevPage}
               disabled={currentPage === 1}
-              className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-300 ${
+              className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-300 border ${
                 currentPage === 1
-                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-blue-500/25'
+                  ? 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
+                  : 'bg-black hover:bg-gray-800 text-white border-black shadow-lg hover:shadow-xl'
               }`}
             >
               <ChevronLeft size={18} />
@@ -496,10 +496,10 @@ export default function ProductList({
                   <button
                     key={pageNum}
                     onClick={() => goToPage(pageNum)}
-                    className={`w-12 h-12 rounded-xl transition-all duration-300 font-semibold ${
+                    className={`w-12 h-12 rounded-lg transition-all duration-300 font-semibold border ${
                       currentPage === pageNum
-                        ? 'bg-blue-600 text-white shadow-lg scale-105'
-                        : 'bg-neutral-800 hover:bg-neutral-700 text-gray-300 hover:text-white hover:scale-105'
+                        ? 'bg-black text-white border-black shadow-lg scale-105'
+                        : 'bg-white hover:bg-gray-100 text-gray-700 hover:text-black border-gray-300 hover:scale-105'
                     }`}
                   >
                     {pageNum}
@@ -512,10 +512,10 @@ export default function ProductList({
             <button
               onClick={goToNextPage}
               disabled={currentPage === totalPages}
-              className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-300 ${
+              className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-300 border ${
                 currentPage === totalPages
-                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-blue-500/25'
+                  ? 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed'
+                  : 'bg-black hover:bg-gray-800 text-white border-black shadow-lg hover:shadow-xl'
               }`}
             >
               Next
@@ -523,7 +523,7 @@ export default function ProductList({
             </button>
           </div>
 
-          <div className="text-gray-400 text-sm hidden sm:block">
+          <div className="text-gray-600 text-sm hidden sm:block">
             {displayProducts.length} total products
             {selectedCategory !== "all" && ` in ${selectedCategory}`}
           </div>
