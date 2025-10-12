@@ -6,7 +6,7 @@ import { ChevronRight } from 'lucide-react'
 
 export default function ProductHerosection() {
   return (
-    <section className="relative bg-white text-gray-900 min-h-screen flex items-center justify-center py-8 lg:py-0 overflow-hidden">
+    <section className="relative py-2 bg-white text-gray-900 min-h-screen flex items-center justify-center py-8 lg:py-0 overflow-hidden">
      
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-100 via-transparent to-transparent"></div>

@@ -110,10 +110,10 @@ export default function Navbar() {
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2 group">
               <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">M</span>
+                <span className="text-white font-bold text-sm">PP</span>
               </div>
               <span className="text-xl font-bold text-black group-hover:text-gray-700 transition-all duration-300">
-                Majid
+                PurePick
               </span>
             </Link>
 
@@ -411,7 +411,7 @@ export default function Navbar() {
                   <Star className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-black mb-2">
-                  Welcome to Majid
+                  Welcome to PurePick
                 </h2>
                 <p className="text-gray-600 text-sm">
                   Sign in to access your account and start shopping
