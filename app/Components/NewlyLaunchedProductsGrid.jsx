@@ -80,7 +80,7 @@ export default function NewlyLaunchedGrid({ products, initialCart, user }) {
     <>
       <Toaster position="top-center" reverseOrder={false} />
       
-      <div className="flex overflow-x-auto  gap-3 pb-4 no-scrollbar">
+      <div className="flex overflow-x-auto  gap-1 pb-4 no-scrollbar">
         {products.map((product) => {
           const quantityInCart = getQuantityInCart(product.id);
           const outOfStock = quantityInCart >= product.stock;
