@@ -45,8 +45,6 @@ export default function Home() {
       {/* ================= ALL PRODUCTS ================= */}
       <AllProductsSection />
 
-      {/* ================= FOOTER ================= */}
-      <Footer />
     </div>
   );
 }

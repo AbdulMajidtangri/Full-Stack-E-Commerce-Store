@@ -271,7 +271,7 @@ export default function ProductList({
       <Toaster position="top-center" reverseOrder={false} />
       
       {/* Category Filter and Products Count */}
-      <div className="px-15 mb-6">
+      <div className="px-6 mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           {/* Category Filter */}
           <div className="flex items-center gap-3">
@@ -285,7 +285,7 @@ export default function ProductList({
             
             {/* Selected Category Badge */}
             {selectedCategory !== "all" && (
-              <div className="flex items-center gap-2 bg-gray-100 text-black px-4 py-2 rounded-full border border-gray-300">
+              <div className="flex items-center gap-2 bg-gray-100 text-black px-2 py-2 rounded-full border border-gray-300">
                 <span className="text-sm font-semibold capitalize">{selectedCategory}</span>
                 <button
                   onClick={clearCategoryFilter}
