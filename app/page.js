@@ -21,14 +21,14 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               href="/dashboard/product"
-              className="bg-black text-white font-semibold py-4 px-8 rounded-lg shadow-lg hover:bg-gray-800 transition-all duration-200 transform hover:scale-105 text-lg"
+              className="bg-black text-white font-semibold py-5 px-12 rounded-lg shadow-lg hover:bg-gray-800 transition-all duration-200 transform hover:scale-105 text-lg"
             >
               Shop Now
             </Link>
 
             <Link
               href="/dashboard/about"
-              className="bg-transparent border-2 border-black text-black hover:bg-black hover:text-white font-semibold py-4 px-8 rounded-lg transition-all duration-200 transform hover:scale-105 text-lg"
+              className="bg-transparent border-2 border-black text-black hover:bg-black hover:text-white font-semibold py-4 px-12 rounded-lg transition-all duration-200 transform hover:scale-105 text-lg"
             >
               Learn More
             </Link>

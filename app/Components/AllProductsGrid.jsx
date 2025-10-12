@@ -107,7 +107,7 @@ export default function AllProductsGrid({ products, initialCart, user }) {
 
               {/* Product Image */}
               <Link href={`/dashboard/product/${product.id}`} className="block flex-shrink-0">
-                <div className="overflow-hidden bg-gray-100 flex justify-center items-center h-48">
+                <div className="overflow-hidden bg-white flex justify-center items-center h-48">
                   <Image
                     src={product.thumbnail}
                     alt={product.title}

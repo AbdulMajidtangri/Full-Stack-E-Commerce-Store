@@ -88,11 +88,11 @@ export default function FeaturedProductsGrid({ products, initialCart, user }) {
           return (
             <div
               key={product.id}
-              className="min-w-[280px] max-w-[320px] bg-white border border-gray-300 rounded-2xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300 flex flex-col h-[480px] flex-shrink-0"
+              className="min-w-[250px] max-w-[300px] bg-white border border-gray-300 rounded-2xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300 flex flex-col h-[480px] flex-shrink-0"
             >
               {/* Product Image */}
               <Link href={`/dashboard/product/${product.id}`} className="block flex-shrink-0">
-                <div className="relative overflow-hidden rounded-t-2xl bg-gray-100 flex justify-center items-center h-48">
+                <div className="relative overflow-hidden rounded-t-2xl bg-white flex justify-center items-center h-48">
                   <Image
                     src={product.thumbnail || product.image}
                     alt={product.title}

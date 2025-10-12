@@ -271,7 +271,7 @@ export default function ProductList({
       <Toaster position="top-center" reverseOrder={false} />
       
       {/* Category Filter and Products Count */}
-      <div className="px-6 mb-6">
+      <div className="px-15 mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           {/* Category Filter */}
           <div className="flex items-center gap-3">
@@ -285,7 +285,7 @@ export default function ProductList({
             
             {/* Selected Category Badge */}
             {selectedCategory !== "all" && (
-              <div className="flex items-center gap-2 bg-gray-100 text-black px-3 py-2 rounded-full border border-gray-300">
+              <div className="flex items-center gap-2 bg-gray-100 text-black px-4 py-2 rounded-full border border-gray-300">
                 <span className="text-sm font-semibold capitalize">{selectedCategory}</span>
                 <button
                   onClick={clearCategoryFilter}
@@ -339,7 +339,7 @@ export default function ProductList({
       </div>
 
       {/* Products Grid - CONSISTENT CARD SIZING */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4">
         {currentProducts.map((product) => {
           const quantityInCart = getQuantityInCart(product.id);
           const outOfStock = quantityInCart >= product.stock;
@@ -367,7 +367,7 @@ export default function ProductList({
 
               {/* Product Image - FIXED HEIGHT */}
               <Link href={`/dashboard/product/${product.id}`} className="block flex-shrink-0">
-                <div className="overflow-hidden bg-gray-100 flex justify-center items-center h-48 border-b border-gray-300">
+                <div className="overflow-hidden bg-white flex justify-center items-center h-48 border-b border-gray-300">
                   {imageErrors[product.id] ? (
                     <div className="flex flex-col items-center justify-center w-full h-full bg-gray-200 text-gray-500">
                       <ImageIcon size={48} className="mb-2" />

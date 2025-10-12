@@ -438,12 +438,16 @@ export default function Navbar() {
 
               {/* Action Buttons */}
               <div className="space-y-3">
-                <LoginLink className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl">
+                <LoginLink
+                postLoginRedirectURL="/"
+                className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl">
                   <LogIn size={20} />
                   Sign In to Account
                 </LoginLink>
                 
-                <RegisterLink className="w-full border-2 border-gray-300 hover:border-black hover:bg-gray-50 text-black font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-3">
+                <RegisterLink
+                postLoginRedirectURL="/"
+                className="w-full border-2 border-gray-300 hover:border-black hover:bg-gray-50 text-black font-semibold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-3">
                   <UserPlus size={20} />
                   Create New Account
                 </RegisterLink>
