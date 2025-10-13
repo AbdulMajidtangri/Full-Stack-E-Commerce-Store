@@ -85,18 +85,26 @@ export default function CartClient({ cartData, userId }) {
     router.push("/dashboard/product");
   };
 
-  const handleCheckout = () => {
-    const checkoutData = {
-      items: cart.items,
-      subtotal: subtotal,
-      totalItems: totalItemsCount
-    };
+// In CartClient.jsx - Enhanced handleCheckout
+const handleCheckout = () => {
+  // Debug: Check what's in the cart
+  console.log('🛒 Cart items at checkout:', cart.items);
+  console.log('💰 Subtotal at checkout:', subtotal);
+  console.log('🔢 Total items at checkout:', totalItemsCount);
 
-    sessionStorage.setItem('checkoutCart', JSON.stringify(checkoutData));
-    localStorage.setItem('checkoutCart_backup', JSON.stringify(checkoutData));
-    
-    router.push("/dashboard/checkout/payment");
+  const checkoutData = {
+    items: cart.items,
+    subtotal: subtotal,
+    totalItems: totalItemsCount,
+    userId: userId, // Make sure this is included
+    timestamp: new Date().toISOString()
   };
+
+  // Store for payment page
+  sessionStorage.setItem('checkoutCart', JSON.stringify(checkoutData));
+  
+  router.push("/dashboard/checkout/payment");
+};
 
   if (!cart.items || cart.items.length === 0) {
     return (

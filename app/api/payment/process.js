@@ -1,65 +1,51 @@
-export default async function handler(req, res) {
+// app/api/payment/process/route.js
+import { NextResponse } from 'next/server';
+
+export async function POST(req) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
   }
 
   try {
-    const { userId, cartItems, totalAmount, paymentMethod, billingAddress, email } = req.body;
+    const { userId, cartItems, totalAmount, paymentMethod, billingAddress, email } = await req.json();
 
-    // TODO: Integrate with your payment processor (Stripe, PayPal, etc.)
-    // This is a mock implementation
-    const paymentResult = await processPaymentWithProvider({
-      amount: totalAmount,
-      currency: 'USD',
-      paymentMethod,
-      metadata: {
-        userId,
-        items: cartItems.map(item => ({
-          productId: item.productId,
-          quantity: item.quantity,
-          price: item.price
-        }))
-      }
-    });
+    // Demo: Just log the received data
+    console.log('🎯 DEMO PAYMENT RECEIVED:');
+    console.log('User ID:', userId);
+    console.log('Total Amount:', totalAmount);
+    console.log('Number of items:', cartItems?.length);
+    console.log('Items:', cartItems?.map(item => ({
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price,
+      subtotal: (item.price * item.quantity).toFixed(2)
+    })));
+    console.log('Email:', email);
+    console.log('Billing Address:', billingAddress);
 
-    // Create order in database
-    const orderId = await createOrder({
-      userId,
-      items: cartItems,
-      totalAmount,
-      billingAddress,
-      email,
-      paymentStatus: 'completed',
-      paymentId: paymentResult.id
-    });
+    // Demo: Simulate payment processing
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-    res.status(200).json({
+    // Demo: Always return success for demo purposes
+    const orderId = `demo_order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    return NextResponse.json({
       success: true,
       orderId,
-      message: 'Payment processed successfully'
+      totalAmount,
+      items: cartItems,
+      message: 'Demo payment processed successfully!',
+      demo: true
     });
 
   } catch (error) {
-    console.error('Payment processing error:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Demo payment error:', error);
+    return NextResponse.json(
+      { 
+        error: 'Demo payment failed',
+        details: error.message 
+      },
+      { status: 500 }
+    );
   }
-}
-
-// Mock payment processor function
-async function processPaymentWithProvider(paymentData) {
-  // Replace this with actual payment processor integration
-  // For now, simulate a successful payment
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id: `pay_${Math.random().toString(36).substr(2, 9)}`,
-        status: 'succeeded'
-      });
-    }, 1000);
-  });
-}
-
-async function createOrder(orderData) {
-  // Replace this with your actual order creation logic
-  return `order_${Math.random().toString(36).substr(2, 9)}`;
 }

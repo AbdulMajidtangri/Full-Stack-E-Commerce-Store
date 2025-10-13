@@ -150,7 +150,7 @@ export default function ProductDetailPage({ params }) {
           {/* Product Gallery Section */}
           <div className="space-y-4">
             {/* Main Image */}
-            <div className="relative bg-gray-50 rounded-xl overflow-hidden border border-gray-200">
+            <div className="relative bg-white rounded-xl overflow-hidden border border-gray-200">
               <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] flex items-center justify-center p-4">
                 <Image
                   src={allImages[selectedImageIndex]}
@@ -192,7 +192,7 @@ export default function ProductDetailPage({ params }) {
 
             {/* Thumbnail Gallery */}
             {allImages.length > 1 && (
-              <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex space-x-3 overflow-x-auto pb-2 p-2 scrollbar-hide">
                 {allImages.map((image, index) => (
                   <button
                     key={index}
@@ -302,17 +302,12 @@ export default function ProductDetailPage({ params }) {
               <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
                 <span className="text-gray-600 block text-xs">Category</span>
                 <p className="text-black font-medium capitalize">
-                  {product.category === "launched" ? "Newly Launched" : 
-                   product.category === "featured" ? "Featured" : 
+                  {product.category === "launched" ? product.category2 : 
+                   product.category === "featured" ? product.category2 : 
                    product.category}
                 </p>
               </div>
-              {product.discountPercentage && (
-                <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 col-span-2">
-                  <span className="text-gray-600 block text-xs">Special Offer</span>
-                  <p className="text-green-600 font-medium">{product.discountPercentage}% OFF</p>
-                </div>
-              )}
+           
             </div>
 
             {/* Action Buttons */}

@@ -45,10 +45,7 @@ export default function Footer() {
   const quickLinks = [
     { name: "Home", href: "/" },
     { name: "Products", href: "/dashboard/products" },
-    { name: "About Us", href: "/dashboard/about" },
     { name: "Contact", href: "/dashboard/contact" },
-    { name: "FAQ", href: "/dashboard/faq" },
-    { name: "Privacy Policy", href: "/dashboard/privacy" }
   ];
 
   const categories = [
@@ -92,7 +89,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-1">
-            <h3 className="text-2xl font-bold text-white mb-4">Majid</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">PurePick</h3>
             <p className="text-gray-400 mb-6 leading-relaxed">
               Your trusted partner for quality products. We deliver excellence 
               and innovation right to your doorstep.

@@ -5,7 +5,7 @@ import ProductHerosection from '../../Components/ProductHerosection';
 
 export default async function ProductPage() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 py-1">
+    <div className="min-h-screen bg-white text-gray-900 py-1 overflow-x-hidden">
       <ProductHerosection />
       {/* Newly Launched Products */}
       <NewlyLaunchedProducts />
