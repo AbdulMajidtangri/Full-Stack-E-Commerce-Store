@@ -1,45 +1,116 @@
 "use client";
 import { useState, useEffect } from "react";
 import QuantityControls from "./QuantityControls";
-import { Trash2, ShoppingBag, ArrowRight, Home } from "lucide-react";
+import { Trash2, ShoppingBag, ArrowRight, Home, Truck, Package, CheckCircle, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCart } from '../../context/CartContext';
 
-export default function CartClient({ cartData, userId }) {
-  const [cart, setCart] = useState(cartData);
+export default function CartClient({ initialCartData, userId }) {
+  const [cart, setCart] = useState(initialCartData || { items: [] });
   const [isRemoving, setIsRemoving] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [orderCompleted, setOrderCompleted] = useState(false);
+  const [error, setError] = useState(null);
   const router = useRouter();
   const { updateCartCount } = useCart();
 
-  const totalItemsCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
-  const subtotal = cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  // Check if order was just completed
+  useEffect(() => {
+    const orderJustCompleted = sessionStorage.getItem('orderCompleted');
+    if (orderJustCompleted) {
+      setOrderCompleted(true);
+      sessionStorage.removeItem('orderCompleted');
+    }
+  }, []);
+
+  // Use initial data first, then fetch fresh data
+  useEffect(() => {
+    if (initialCartData?.items && initialCartData.items.length > 0) {
+      const totalItems = initialCartData.items.reduce((acc, item) => acc + item.quantity, 0);
+      updateCartCount(totalItems);
+    }
+    
+    fetchCartData();
+  }, [userId]);
+
+  const fetchCartData = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // FIXED: Use the correct endpoint - just /api/cart with userId as query param
+      const response = await fetch(`/api/cart?userId=${userId}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load cart: ${response.status}`);
+      }
+      
+      const freshCart = await response.json();
+      setCart(freshCart);
+      
+      // Update cart count based on fresh data
+      const totalItems = freshCart.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
+      updateCartCount(totalItems);
+      
+    } catch (error) {
+      console.error('Error fetching cart:', error);
+      setError('Failed to load cart. Please try again.');
+      // If fetch fails, use the initial data
+      if (initialCartData?.items && initialCartData.items.length > 0) {
+        const totalItems = initialCartData.items.reduce((acc, item) => acc + item.quantity, 0);
+        updateCartCount(totalItems);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const totalItemsCount = cart?.items?.reduce((acc, item) => acc + item.quantity, 0) || 0;
+  const subtotal = cart?.items?.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
 
   const updateCartCounts = (count) => {
     updateCartCount(count);
-    localStorage.setItem('cartCount', count.toString());
-    window.dispatchEvent(new CustomEvent('cartUpdate', { detail: { count } }));
   };
 
-  useEffect(() => {
-    updateCartCounts(totalItemsCount);
-  }, [totalItemsCount]);
-
   const handleQuantityChange = async (productId, newQty) => {
-    setCart((prevCart) => {
-      const updatedCart = {
-        ...prevCart,
-        items: prevCart.items.map((item) =>
-          item.productId === productId
-            ? { ...item, quantity: newQty }
-            : item
-        ),
-      };
-      
-      const newTotal = updatedCart.items.reduce((acc, item) => acc + item.quantity, 0);
-      updateCartCounts(newTotal);
-      
-      return updatedCart;
-    });
+    try {
+      const response = await fetch("/api/cart", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          productId: productId,
+          quantity: newQty
+        }),
+      });
+
+      if (response.ok) {
+        setCart((prevCart) => {
+          const updatedCart = {
+            ...prevCart,
+            items: prevCart.items.map((item) =>
+              item.productId === productId
+                ? { ...item, quantity: newQty }
+                : item
+            ),
+          };
+          
+          const newTotal = updatedCart.items.reduce((acc, item) => acc + item.quantity, 0);
+          updateCartCounts(newTotal);
+          
+          return updatedCart;
+        });
+      } else {
+        console.error("Failed to update quantity");
+        // Refresh cart data if update fails
+        fetchCartData();
+      }
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+      fetchCartData();
+    }
   };
 
   const handleRemoveItem = async (productId) => {
@@ -57,8 +128,6 @@ export default function CartClient({ cartData, userId }) {
         }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
         setCart((prevCart) => {
           const updatedCart = {
@@ -72,10 +141,12 @@ export default function CartClient({ cartData, userId }) {
           return updatedCart;
         });
       } else {
-        console.error("Failed to remove item:", data.error);
+        console.error("Failed to remove item");
+        fetchCartData();
       }
     } catch (error) {
       console.error("Error removing item:", error);
+      fetchCartData();
     } finally {
       setIsRemoving(null);
     }
@@ -85,44 +156,124 @@ export default function CartClient({ cartData, userId }) {
     router.push("/dashboard/product");
   };
 
-// In CartClient.jsx - Enhanced handleCheckout
-const handleCheckout = () => {
-  // Debug: Check what's in the cart
-  console.log('🛒 Cart items at checkout:', cart.items);
-  console.log('💰 Subtotal at checkout:', subtotal);
-  console.log('🔢 Total items at checkout:', totalItemsCount);
-
-  const checkoutData = {
-    items: cart.items,
-    subtotal: subtotal,
-    totalItems: totalItemsCount,
-    userId: userId, // Make sure this is included
-    timestamp: new Date().toISOString()
+  const viewOrders = () => {
+    router.push("/dashboard/orders");
   };
 
-  // Store for payment page
-  sessionStorage.setItem('checkoutCart', JSON.stringify(checkoutData));
-  
-  router.push("/dashboard/checkout/payment");
-};
+  const handleCheckout = () => {
+    console.log('Proceeding to checkout with:', {
+      items: cart.items,
+      subtotal: subtotal,
+      totalItems: totalItemsCount
+    });
+    
+    router.push("/dashboard/checkout/payment");
+  };
 
-  if (!cart.items || cart.items.length === 0) {
+  // Show error state
+  if (error) {
     return (
       <div className="min-h-screen bg-white py-12 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-8 sm:p-12">
-            <ShoppingBag className="w-16 h-16 sm:w-24 sm:h-24 text-gray-400 mx-auto mb-4 sm:mb-6" />
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">Your Cart is Empty</h2>
-            <p className="text-gray-600 text-base sm:text-lg mb-6 sm:mb-8 max-w-md mx-auto px-4">
-              Looks like you haven't added any items to your cart yet. Start shopping to discover amazing products!
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 sm:p-12 shadow-sm">
+            <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <RefreshCw className="w-12 h-12 text-red-600" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-black mb-4">Connection Error</h2>
+            <p className="text-gray-600 text-base sm:text-lg mb-8 max-w-md mx-auto">
+              {error}
             </p>
-            <button
-              onClick={continueShopping}
-              className="bg-black hover:bg-gray-800 text-white font-semibold py-3 px-6 sm:px-8 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 sm:gap-3 mx-auto text-sm sm:text-base"
-            >
-              Continue Shopping
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={fetchCartData}
+                className="bg-black hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto"
+              >
+                <RefreshCw className="w-5 h-5" />
+                Try Again
+              </button>
+              <button
+                onClick={() => router.push('/dashboard/product')}
+                className="border border-gray-300 hover:border-black text-gray-700 hover:text-black font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center gap-2 mx-auto"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                Continue Shopping
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state only if we're actively fetching and have no data
+  if (isLoading && (!cart?.items || cart.items.length === 0)) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-black border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your cart...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show order success state
+  if (orderCompleted) {
+    return (
+      <div className="min-h-screen bg-white py-12 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 sm:p-12 shadow-sm">
+            <div className="w-24 h-24 bg-black rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-12 h-12 text-white" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-black mb-4">Order Placed Successfully!</h2>
+            <p className="text-gray-600 text-base sm:text-lg mb-8 max-w-md mx-auto">
+              Thank you for your order! Your products are being processed and will be shipped soon.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={continueShopping}
+                className="bg-black hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                Continue Shopping
+              </button>
+              <button
+                onClick={viewOrders}
+                className="border border-gray-300 hover:border-black text-gray-700 hover:text-black font-semibold py-3 px-6 rounded-lg transition-all duration-300 flex items-center gap-2 mx-auto"
+              >
+                <Truck className="w-5 h-5" />
+                View Your Orders
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty cart state
+  if (!cart?.items || cart.items.length === 0) {
+    return (
+      <div className="min-h-screen bg-white py-12 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 sm:p-12 shadow-sm">
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Package className="w-12 h-12 text-gray-400" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-black mb-4">Your Cart is Empty</h2>
+            <p className="text-gray-600 text-base sm:text-lg mb-8 max-w-md mx-auto">
+              {isLoading ? "Loading..." : "Add some products to your cart to get started!"}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={continueShopping}
+                className="bg-black hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                Continue Shopping
+              </button>
+            </div>
           </div>
         </div>
       </div>

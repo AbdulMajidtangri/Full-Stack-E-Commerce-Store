@@ -4,14 +4,14 @@ import Link from 'next/link';
 import { Menu, X, User, ShoppingCart, XCircle, LogIn, UserPlus, Star, ChevronDown, Search, Shield, Clock, Package, Award } from 'lucide-react';
 import { LoginLink, RegisterLink, LogoutLink, useKindeAuth } from "@kinde-oss/kinde-auth-nextjs";
 import { useCart } from '../context/CartContext';
-import { useSearch } from '../context/SearchContext'; // Add this import
+import { useSearch } from '../context/SearchContext';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { cartCount } = useCart();
+  const { cartCount, clearCart } = useCart();
   const { user, isAuthenticated } = useKindeAuth();
   
   // Use search context
@@ -89,7 +89,6 @@ export default function Navbar() {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // You can navigate to search results page or handle it here
       console.log('Searching for:', searchQuery);
       setIsSearchOpen(false);
     }
@@ -98,6 +97,13 @@ export default function Navbar() {
   const clearSearch = () => {
     setSearchQuery('');
     setIsSearchOpen(false);
+  };
+
+  const handleLogout = () => {
+    // Clear cart when user logs out
+    clearCart();
+    console.log('Cart cleared on logout');
+    setIsProfileOpen(false);
   };
 
   return (
@@ -201,13 +207,13 @@ export default function Navbar() {
 
             {/* Right Side - Icons */}
             <div className="flex items-center gap-3">
-              {/* Cart */}
+              {/* Cart - Only show counter when user is authenticated */}
               <Link 
                 href="/dashboard/cart" 
                 className="relative p-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg transition-all duration-200 group"
               >
                 <ShoppingCart size={20} className="group-hover:scale-110 transition-transform duration-200" />
-                {cartCount > 0 && (
+                {isAuthenticated && cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium">
                     {cartCount > 9 ? '9+' : cartCount}
                   </span>
@@ -239,7 +245,10 @@ export default function Navbar() {
                           </p>
                         </div>
                         <div className="p-2">
-                          <LogoutLink className="flex items-center gap-3 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+                          <LogoutLink 
+                            onClick={handleLogout}
+                            className="flex items-center gap-3 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                          >
                             Sign Out
                           </LogoutLink>
                         </div>
@@ -339,7 +348,12 @@ export default function Navbar() {
                   { href: "/", label: "Home" },
                   { href: "/dashboard/product", label: "Products" },
                   { href: "/dashboard/contact", label: "Contact" },
-                  { href: "/dashboard/cart", label: "Cart", icon: ShoppingCart, badge: cartCount }
+                  { 
+                    href: "/dashboard/cart", 
+                    label: "Cart", 
+                    icon: ShoppingCart, 
+                    badge: isAuthenticated ? cartCount : 0 
+                  }
                 ].map((item) => (
                   <li key={item.href}>
                     <Link 

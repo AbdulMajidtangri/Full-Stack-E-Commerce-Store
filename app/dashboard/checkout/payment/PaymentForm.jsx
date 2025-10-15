@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CreditCard, Lock, Shield } from "lucide-react";
+import { CreditCard, Lock, Shield, CheckCircle } from "lucide-react";
+import { useCart } from '../../../context/CartContext';
 
-export default function PaymentForm({ cart, subtotal }) {
+export default function PaymentForm({ cartData, subtotal, sessionId }) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     cardNumber: "",
@@ -21,6 +23,7 @@ export default function PaymentForm({ cart, subtotal }) {
   });
   const [errors, setErrors] = useState({});
   const router = useRouter();
+  const { clearCart } = useCart();
 
   const exactSubtotal = subtotal || 0;
 
@@ -38,22 +41,25 @@ export default function PaymentForm({ cart, subtotal }) {
       }));
     }
   };
-if (!cart || !cart.items || cart.items.length === 0) {
-  return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold mb-4">Cart Not Found</h2>
-        <p className="text-gray-400 mb-6">Your cart appears to be empty or unavailable.</p>
-        <button 
-          onClick={() => router.push('/dashboard/cart')}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl"
-        >
-          Return to Cart
-        </button>
+
+  // Early return if no cart data
+  if (!cartData || !cartData.items || cartData.items.length === 0) {
+    return (
+      <div className="min-h-screen bg-white text-black flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Cart Not Found</h2>
+          <p className="text-gray-600 mb-6">Your cart appears to be empty or unavailable.</p>
+          <button 
+            onClick={() => router.push('/dashboard/cart')}
+            className="bg-black hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300"
+          >
+            Return to Cart
+          </button>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -101,56 +107,78 @@ if (!cart || !cart.items || cart.items.length === 0) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsProcessing(true);
-
+  const clearUserCart = async () => {
     try {
-      const paymentResponse = await fetch("/api/payment/process", {
-        method: "POST",
+      // Clear the user's cart from the database
+      const response = await fetch("/api/cart/clear", {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          cartItems: cart?.items || [],
-          totalAmount: exactSubtotal,
-          paymentMethod: {
-            cardNumber: formData.cardNumber,
-            expiryDate: formData.expiryDate,
-            cvv: formData.cvv,
-            nameOnCard: formData.nameOnCard
-          },
-          billingAddress: {
-            address: formData.address,
-            city: formData.city,
-            state: formData.state,
-            zipCode: formData.zipCode,
-            country: formData.country
-          },
-          email: formData.email
+          userId: cartData.userId
         }),
       });
 
-      const paymentResult = await paymentResponse.json();
-
-      if (paymentResponse.ok) {
-        sessionStorage.removeItem('checkoutCart');
-        router.push(`/`);
-      } else {
-        throw new Error(paymentResult.error || "Payment failed");
+      if (!response.ok) {
+        console.error("Failed to clear cart");
       }
     } catch (error) {
-      console.error("Payment error:", error);
-      setErrors({ submit: error.message });
-    } finally {
-      setIsProcessing(false);
+      console.error("Error clearing cart:", error);
     }
   };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!validateForm()) {
+    return;
+  }
+
+  setIsProcessing(true);
+
+  try {
+    // Simulate payment processing for 5 seconds - DEMO ONLY
+    console.log("🔄 Starting payment processing...");
+    await new Promise(resolve => setTimeout(resolve, 5000));
+    
+    // Show success state
+    console.log("✅ Payment successful, showing success state...");
+    setIsSuccess(true);
+    
+    // Clear user's cart from database
+    console.log("🗑️ Clearing user cart...");
+    await clearUserCart();
+    
+    // Clear cart from context and localStorage
+    console.log("🔄 Clearing cart context...");
+    clearCart();
+    
+    // Set order completed flag
+    sessionStorage.setItem('orderCompleted', 'true');
+    
+    // Clear any existing session storage
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('checkoutCart');
+      localStorage.removeItem('checkoutCart_backup');
+      localStorage.removeItem('cartCount');
+    }
+    
+    // Wait 2 seconds to show success state
+    console.log("⏳ Showing success state for 2 seconds...");
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Redirect to success page
+    console.log("🚀 Redirecting to success page...");
+    router.push(`/dashboard/checkout/success?sessionId=${sessionId}`);
+    
+  } catch (error) {
+    console.error("Payment error:", error);
+    // Don't show error to user in demo
+  } finally {
+    setIsProcessing(false);
+    setIsSuccess(false);
+  }
+};
 
   const formatCardNumber = (value) => {
     return value.replace(/\s/g, "").replace(/(\d{4})/g, "$1 ").trim();
@@ -193,7 +221,7 @@ if (!cart || !cart.items || cart.items.length === 0) {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                    className={`w-full px-4 py-3 bg-white text-gray-600 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
                       errors.email ? "border-red-500" : "border-gray-300"
                     }`}
                     placeholder="your@email.com"
@@ -229,7 +257,7 @@ if (!cart || !cart.items || cart.items.length === 0) {
                         }
                       }}
                       maxLength={19}
-                      className={`w-full px-4 py-3 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                      className={`w-full px-4 py-3 bg-white text-gray-600 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
                         errors.cardNumber ? "border-red-500" : "border-gray-300"
                       }`}
                       placeholder="1234 5678 9012 3456"
@@ -249,7 +277,7 @@ if (!cart || !cart.items || cart.items.length === 0) {
                       name="nameOnCard"
                       value={formData.nameOnCard}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                      className={`w-full px-4 py-3 bg-white text-gray-600  border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
                         errors.nameOnCard ? "border-red-500" : "border-gray-300"
                       }`}
                       placeholder="John Doe"
@@ -259,33 +287,33 @@ if (!cart || !cart.items || cart.items.length === 0) {
                     )}
                   </div>
 
-<div>
-  <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-300 mb-2">
-    Expiry Date
-  </label>
-  <input
-    type="text"
-    id="expiryDate"
-    name="expiryDate"
-    value={formData.expiryDate}
-    onChange={(e) => {
-      const formatted = formatExpiryDate(e.target.value);
-      setFormData(prev => ({ ...prev, expiryDate: formatted }));
-      
-      if (errors.expiryDate) {
-        setErrors(prev => ({ ...prev, expiryDate: "" }));
-      }
-    }}
-    maxLength={5}
-    className={`w-full px-4 py-3 bg-neutral-800 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-      errors.expiryDate ? "border-red-500" : "border-gray-700"
-    }`}
-    placeholder="MM/YY"
-  />
-  {errors.expiryDate && (
-    <p className="text-red-400 text-sm mt-1">{errors.expiryDate}</p>
-  )}
-</div>
+                  <div>
+                    <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700 mb-2">
+                      Expiry Date
+                    </label>
+                    <input
+                      type="text"
+                      id="expiryDate"
+                      name="expiryDate"
+                      value={formData.expiryDate}
+                      onChange={(e) => {
+                        const formatted = formatExpiryDate(e.target.value);
+                        setFormData(prev => ({ ...prev, expiryDate: formatted }));
+                        
+                        if (errors.expiryDate) {
+                          setErrors(prev => ({ ...prev, expiryDate: "" }));
+                        }
+                      }}
+                      maxLength={5}
+                      className={`w-full px-4 py-3 bg-white text-gray-600 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                        errors.expiryDate ? "border-red-500" : "border-gray-300"
+                      }`}
+                      placeholder="MM/YY"
+                    />
+                    {errors.expiryDate && (
+                      <p className="text-red-600 text-sm mt-1">{errors.expiryDate}</p>
+                    )}
+                  </div>
 
                   <div>
                     <label htmlFor="cvv" className="block text-sm font-medium text-gray-700 mb-2">
@@ -298,7 +326,7 @@ if (!cart || !cart.items || cart.items.length === 0) {
                       value={formData.cvv}
                       onChange={handleInputChange}
                       maxLength={4}
-                      className={`w-full px-4 py-3 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                      className={`w-full px-4 py-3 bg-white text-gray-600 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
                         errors.cvv ? "border-red-500" : "border-gray-300"
                       }`}
                       placeholder="123"
@@ -316,7 +344,7 @@ if (!cart || !cart.items || cart.items.length === 0) {
                       name="saveCard"
                       checked={formData.saveCard}
                       onChange={handleInputChange}
-                      className="w-4 h-4 text-black bg-white border-gray-300 rounded focus:ring-black"
+                      className="w-4 h-4 text-black bg-white text-gray-600 border-gray-300 rounded focus:ring-black"
                     />
                     <span className="text-gray-700 text-sm">Save card for future purchases</span>
                   </label>
@@ -340,7 +368,7 @@ if (!cart || !cart.items || cart.items.length === 0) {
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                      className={`w-full px-4 py-3 bg-white text-gray-600 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
                         errors.address ? "border-red-500" : "border-gray-300"
                       }`}
                       placeholder="123 Main St"
@@ -360,7 +388,7 @@ if (!cart || !cart.items || cart.items.length === 0) {
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                      className={`w-full px-4 py-3 bg-white text-gray-600 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
                         errors.city ? "border-red-500" : "border-gray-300"
                       }`}
                       placeholder="New York"
@@ -380,7 +408,7 @@ if (!cart || !cart.items || cart.items.length === 0) {
                       name="state"
                       value={formData.state}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                      className={`w-full px-4 py-3 bg-white text-gray-600 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
                         errors.state ? "border-red-500" : "border-gray-300"
                       }`}
                       placeholder="NY"
@@ -400,7 +428,7 @@ if (!cart || !cart.items || cart.items.length === 0) {
                       name="zipCode"
                       value={formData.zipCode}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                      className={`w-full px-4 py-3 bg-white text-gray-600 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
                         errors.zipCode ? "border-red-500" : "border-gray-300"
                       }`}
                       placeholder="10001"
@@ -419,7 +447,7 @@ if (!cart || !cart.items || cart.items.length === 0) {
                       name="country"
                       value={formData.country}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                      className="w-full px-4 py-3 bg-white  border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                     >
                       <option value="US">United States</option>
                       <option value="CA">Canada</option>
@@ -434,13 +462,24 @@ if (!cart || !cart.items || cart.items.length === 0) {
               <div className="bg-white border border-gray-300 rounded-xl p-6">
                 <button
                   type="submit"
-                  disabled={isProcessing}
-                  className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                  disabled={isProcessing || isSuccess}
+                  className={`w-full font-semibold py-4 rounded-lg transition-all duration-300 transform shadow-lg disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 ${
+                    isProcessing 
+                      ? "bg-blue-600 text-white" 
+                      : isSuccess 
+                        ? "bg-green-600 text-white" 
+                        : "bg-black hover:bg-gray-800 text-white hover:scale-105"
+                  }`}
                 >
                   {isProcessing ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Processing...
+                      Processing Payment ....
+                    </>
+                  ) : isSuccess ? (
+                    <>
+                      <CheckCircle className="w-5 h-5" />
+                      Payment Successful! Redirecting...
                     </>
                   ) : (
                     <>
@@ -449,10 +488,6 @@ if (!cart || !cart.items || cart.items.length === 0) {
                     </>
                   )}
                 </button>
-                
-                {errors.submit && (
-                  <p className="text-red-600 text-center mt-4">{errors.submit}</p>
-                )}
 
                 <p className="text-gray-600 text-xs text-center mt-4">
                   By completing your purchase, you agree to our Terms of Service and Privacy Policy.
@@ -468,7 +503,7 @@ if (!cart || !cart.items || cart.items.length === 0) {
               <h2 className="text-xl font-semibold mb-4 text-black">Order Summary</h2>
               
               <div className="space-y-3 mb-4">
-                {cart?.items?.map((item) => (
+                {cartData.items.map((item) => (
                   <div key={item.productId} className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
                       <img

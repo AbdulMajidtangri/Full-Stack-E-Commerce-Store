@@ -34,35 +34,35 @@ export async function GET(request) {
 }
 
 // POST - Add item to cart
-export async function POST(request) {
+export async function POST(req) {
   try {
-    await connectDB();
-
-    const { userId, product } = await request.json();
+    const { userId, product } = await req.json();
 
     if (!userId) {
       return NextResponse.json(
-        { error: "User ID is required" },
-        { status: 400 }
+        { error: "Not authenticated" },
+        { status: 401 }
       );
     }
 
+    await connectDB();
+
     const productId = String(product.productId);
 
-    // Extract image as string if it's an object
+    // ✅ Extract image as string if it's an object
     let imageUrl = "";
     if (typeof product.image === "string") {
       imageUrl = product.image;
     } else if (product.image && product.image.src) {
       imageUrl = product.image.src;
     } else {
-      imageUrl = "/default-product.png";
+      imageUrl = "/default-product.png"; // fallback
     }
 
     const newItem = {
       productId,
       name: product.name || "Unnamed Product",
-      image: imageUrl,
+      image: imageUrl, // ✅ Fixed here
       price: Number(product.price) || 0,
       quantity: 1,
       stock: Number(product.stock) || 1,
@@ -107,21 +107,21 @@ export async function POST(request) {
   } catch (error) {
     console.error("Cart POST Error:", error);
     return NextResponse.json(
-      { error: "Server error" },
+      { error: error.message || "Server error" },
       { status: 500 }
     );
   }
 }
 
 // PATCH - Update item quantity
-export async function PATCH(request) {
+export async function PATCH(req) {
   try {
-    const { userId, productId, quantity } = await request.json();
+    const { userId, productId, quantity } = await req.json();
 
     if (!userId) {
       return NextResponse.json(
-        { error: "User ID is required" }, 
-        { status: 400 }
+        { error: "Not authenticated" }, 
+        { status: 401 }
       );
     }
 
@@ -167,7 +167,8 @@ export async function PATCH(request) {
         cart 
       },
       { 
-        status: 200
+        status: 200,
+        headers: { "Content-Type": "application/json" }
       }
     );
   } catch (error) {
@@ -179,15 +180,15 @@ export async function PATCH(request) {
   }
 }
 
-// DELETE - Remove item from cart
-export async function DELETE(request) {
+// DELETE - Remove item from cart or clear entire cart
+export async function DELETE(req) {
   try {
-    const { userId, productId } = await request.json();
+    const { userId, productId } = await req.json();
 
     if (!userId) {
       return NextResponse.json(
-        { error: "User ID is required" }, 
-        { status: 400 }
+        { error: "Not authenticated" }, 
+        { status: 401 }
       );
     }
 
@@ -201,19 +202,33 @@ export async function DELETE(request) {
       );
     }
 
-    // Remove the item from the cart
-    cart.items = cart.items.filter((item) => String(item.productId) !== String(productId));
-    
-    await cart.save();
+    // If productId is provided, remove specific item
+    if (productId) {
+      cart.items = cart.items.filter((item) => String(item.productId) !== String(productId));
+      await cart.save();
 
-    return NextResponse.json(
-      { 
-        success: true, 
-        message: "Item removed from cart", 
-        cart 
-      },
-      { status: 200 }
-    );
+      return NextResponse.json(
+        { 
+          success: true, 
+          message: "Item removed from cart", 
+          cart 
+        },
+        { status: 200 }
+      );
+    } else {
+      // If no productId, clear entire cart
+      cart.items = [];
+      await cart.save();
+
+      return NextResponse.json(
+        { 
+          success: true, 
+          message: "Cart cleared successfully", 
+          cart 
+        },
+        { status: 200 }
+      );
+    }
   } catch (error) {
     console.error("Cart DELETE Error:", error);
     return NextResponse.json(

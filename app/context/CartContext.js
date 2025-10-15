@@ -29,12 +29,20 @@ export function CartProvider({ children }) {
       }
     };
 
+    // Listen for logout events
+    const handleLogout = () => {
+      console.log('Logout event detected, clearing cart...');
+      clearCart();
+    };
+
     window.addEventListener('cartUpdate', handleCartUpdate);
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('userLogout', handleLogout);
     
     return () => {
       window.removeEventListener('cartUpdate', handleCartUpdate);
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLogout', handleLogout);
     };
   }, []);
 
@@ -47,9 +55,29 @@ export function CartProvider({ children }) {
     }));
   };
 
+  // Function to clear cart count
+  const clearCart = () => {
+    console.log('Clearing cart count...');
+    setCartCount(0);
+    localStorage.removeItem('cartCount');
+    // Clear all cart-related storage
+    localStorage.removeItem('checkoutCart');
+    localStorage.removeItem('checkoutCart_backup');
+    sessionStorage.removeItem('checkoutCart');
+    sessionStorage.removeItem('orderCompleted');
+    
+    // Dispatch events to notify all components
+    window.dispatchEvent(new CustomEvent('cartUpdate', { 
+      detail: { count: 0 } 
+    }));
+    
+    console.log('Cart cleared successfully');
+  };
+
   const value = {
     cartCount,
-    updateCartCount
+    updateCartCount,
+    clearCart
   };
 
   return (
