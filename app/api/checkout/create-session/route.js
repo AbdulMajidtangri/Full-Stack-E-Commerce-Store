@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import connectDB from "../../authpg/lib/mongodb";
-import Cart from "../../authpg/models/Cart";
+import connectDB from "../../../authpg/lib/mongodb";
+import Cart from "../../../authpg/models/Cart";
 
 // GET - Get user's cart
 export async function GET(request) {
