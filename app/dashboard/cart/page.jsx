@@ -15,7 +15,7 @@ export default async function CartPage() {
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-black text-gray-300">
-        <h2 className="text-3xl font-semibold mb-4">🛒 Please Log In</h2>
+        <h2 className="text-3xl font-semibold mb-4">Please Log In</h2>
         <p className="text-lg">Sign in to view your personalized cart.</p>
       </div>
     );
